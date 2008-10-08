@@ -125,7 +125,30 @@ def p_expression_name(t):
     expression : NAME
     '''
     t[0] = names[t[1]]
-    
+
+def p_statement_if(t):
+    '''
+    statement : IF expression COLON suite
+    '''
+    if t[2]:
+        t[0] = t[4]
+
+def p_suite(t):
+    '''
+    suite : NEWLINE INDENT statements DEDENT
+    '''
+    t[0] = t[3]
+
+def p_statements(t):
+    '''
+    statements : statements statement
+               | statement 
+    '''
+    if len(t) == 3:
+        t[0] = t[1] + t[2]
+    else:
+        t[0] = t[1]
+
 def p_error(t):
     print "Syntax error at '%s'" % t.value
 

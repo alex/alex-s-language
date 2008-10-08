@@ -164,6 +164,8 @@ class Lexer(object):
         
         'WHITESPACE',
         'NEWLINE',
+        'INDENT',
+        'DEDENT',
     ) + tuple(reserved.values())
 
     t_ignore = ' '
