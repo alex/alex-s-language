@@ -129,12 +129,13 @@ def p_expression_name(t):
 def p_error(t):
     print "Syntax error at '%s'" % t.value
 
+lexer = Lexer()
+lexer.build()
+tokens = lexer.tokens
 parser = yacc.yacc()
 
 if __name__ == '__main__':
     import sys
-    lexer = Lexer()
-    lexer.build()
     if sys.argv[1:]:
         for line in open(sys.argv[1]):
             parser.parse(line, lexer=lexer.lexer)
