@@ -4,7 +4,7 @@ import operator
 
 from ply import yacc
 
-from lexer import lexer, tokens
+from lexer import Lexer
 
 precedence = (
     ('left', 'PLUS', 'MINUS'),
@@ -133,9 +133,11 @@ parser = yacc.yacc()
 
 if __name__ == '__main__':
     import sys
+    lexer = Lexer()
+    lexer.build()
     if sys.argv[1:]:
         for line in open(sys.argv[1]):
-            parser.parse(line, lexer=lexer)
+            parser.parse(line, lexer=lexer.lexer)
     else:
         while True:
             try:
@@ -148,4 +150,4 @@ if __name__ == '__main__':
                 continue
             if not s:
                 continue
-            parser.parse(s, lexer = lexer)
+            parser.parse(s, lexer = lexer.lexer)
