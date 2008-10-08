@@ -130,7 +130,6 @@ def p_error(t):
     print "Syntax error at '%s'" % t.value
 
 lexer = Lexer()
-lexer.build()
 tokens = lexer.tokens
 parser = yacc.yacc()
 
@@ -138,7 +137,7 @@ if __name__ == '__main__':
     import sys
     if sys.argv[1:]:
         for line in open(sys.argv[1]):
-            parser.parse(line, lexer=lexer.lexer)
+            parser.parse(line, lexer=lexer)
     else:
         while True:
             try:
@@ -151,4 +150,4 @@ if __name__ == '__main__':
                 continue
             if not s:
                 continue
-            parser.parse(s, lexer = lexer.lexer)
+            parser.parse(s, lexer = lexer)

@@ -1,9 +1,36 @@
 from ply import lex
 
+def track_indents(lexer):
+    while True:
+        token = lexer.token()
+        if token is not None:
+            yield token
+        else:
+            break
+
 class Lexer(object):
+    def __init__(self):
+        self._built = False
+    
+    def require_built(self):
+        if not self._built:
+            self.build()
+    
     def build(self, **kwargs):
         self.lexer = lex.lex(object=self, **kwargs)
     
+    def input(self, s):
+        self.require_built()
+        self.lexer.paren_count = 0
+        self.lexer.input(s)
+        self.token_stream = track_indents(self.lexer)
+    
+    def token(self):
+        try:
+            return self.token_stream.next()
+        except StopIteration:
+            return None
+        
     reserved = {
         'if': 'IF',
         'else': 'ELSE',
@@ -13,6 +40,8 @@ class Lexer(object):
         'in': 'IN',
         'def': 'DEF',
         'class': 'CLASS',
+        'return': 'RETURN',
+        'break': 'CONTINUE',
     }
     tokens = (
         # objects of sorts
@@ -55,6 +84,8 @@ class Lexer(object):
         'COMMENT',
         'COLON',
         'COMMA',
+        
+        'WHITESPACE',
         'NEWLINE',
     ) + tuple(reserved.values())
 
@@ -79,9 +110,29 @@ class Lexer(object):
     t_LE = r'<='
     t_GE = r'>='
 
-    t_LPAREN = r'\('
-    t_RPAREN = r'\)'
     t_COLON = r':'
+    
+    def t_WHITESPACE(self, t):
+        r' [ ]+ '
+        if t.lexer.at_line_start and not t.lexer.paren_count:
+            return t
+    
+    def t_newline(self, t):
+        r'\n+'
+        t.lexer.lineno += len(t.value)
+        t.type = 'NEWLINE'
+        if not t.lexer.paren_count:
+            return t
+    
+    def t_LPAREN(self, t):
+        r'\('
+        t.lexer.paren_count += 1
+        return t
+    
+    def t_RPAREN(self, t):
+        r'\)'
+        t.lexer.paren_count -= 1
+        return t
     
     def t_AND(self, t):
         r'and'
@@ -113,11 +164,6 @@ class Lexer(object):
             t.value = 0
         return t
 
-    def t_newline(self, t):
-        r'\n'
-        t.lexer.lineno += 1
-        t.type = 'NEWLINE'
-
     def t_TRUE(self, t):
         r'True'
         t.value = True
@@ -135,7 +181,7 @@ class Lexer(object):
 
     def t_NAME(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
-        t.type = reserved.get(t.value, 'NAME')
+        t.type = self.reserved.get(t.value, 'NAME')
         return t
 
     def t_COMMENT(self, t):
