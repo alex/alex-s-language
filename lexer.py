@@ -59,10 +59,6 @@ t_TIMES = r'\*'
 t_DIVIDE = r'/'
 t_MODULO = r'%'
 
-t_NOT = r'not'
-t_AND = r'and'
-t_OR = r'or'
-
 t_EQUALS = r'='
 t_PLUS_EQUALS = r'\+='
 t_MINUS_EQUALS = r'-='
@@ -78,6 +74,18 @@ t_GE = r'>='
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_COLON = r':'
+
+def t_AND(t):
+    r'and'
+    return t
+
+def t_OR(t):
+    r'or'
+    return t
+
+def t_NOT(t):
+    'not'
+    return t
 
 def t_FLOAT(t):
     r'\d*\.\d+'
