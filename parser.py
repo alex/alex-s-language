@@ -129,15 +129,20 @@ def p_error(t):
 parser = yacc.yacc()
 
 if __name__ == '__main__':
-    while True:
-        try:
-            s = raw_input('alex > ')
-        except EOFError:
-            print
-            break
-        except KeyboardInterrupt:
-            print
-            continue
-        if not s:
-            continue
-        parser.parse(s, lexer = lexer)
+    import sys
+    if sys.argv[1:]:
+        for line in open(sys.argv[1]):
+            parser.parse(line, lexer=lexer)
+    else:
+        while True:
+            try:
+                s = raw_input('alex > ')
+            except EOFError:
+                print
+                break
+            except KeyboardInterrupt:
+                print
+                continue
+            if not s:
+                continue
+            parser.parse(s, lexer = lexer)
