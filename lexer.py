@@ -52,7 +52,7 @@ tokens = (
     'COMMENT',
     'COLON',
     'COMMA',
-
+    'NEWLINE',
 ) + tuple(reserved.values())
 
 t_PLUS = r'\+'
@@ -111,6 +111,7 @@ def t_INTEGER(t):
 def t_newline(t):
     r'\n'
     t.lexer.lineno += 1
+    t.type = 'NEWLINE'
 
 def t_TRUE(t):
     r'True'
