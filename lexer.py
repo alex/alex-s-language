@@ -107,7 +107,7 @@ def t_INTEGER(t):
 
 def t_newline(t):
     r'\n'
-    t.lexler.lineno += 1
+    t.lexer.lineno += 1
 
 def t_TRUE(t):
     r'True'
