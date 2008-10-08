@@ -9,9 +9,9 @@ from lexer import Lexer
 precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE'),
-    ('left', 'POWER'),
     ('right', 'UMINUS'),
     ('right', 'UPLUS'),
+    ('left', 'POWER'),
 )
 
 BINARY_OPS = {
