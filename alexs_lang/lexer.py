@@ -1,7 +1,7 @@
 from ply import lex
 
 def _new_token(type_, lineno, value=None):
-    tok = lex.LexTok()
+    tok = lex.LexToken()
     tok.type = type_
     tok.lineno = lineno
     tok.value = value
@@ -36,6 +36,7 @@ def indent_needed(lexer, tokens):
                 token.must_indent = True
             else:
                 token.must_indent = False
+            at_line_start = False
             indent = False
         yield token
         lexer.at_line_start = at_line_start
@@ -168,7 +169,6 @@ class Lexer(object):
         'DEDENT',
     ) + tuple(reserved.values())
 
-    t_ignore = ' '
 
     t_PLUS = r'\+'
     t_MINUS = r'-'
