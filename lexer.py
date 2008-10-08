@@ -27,6 +27,7 @@ tokens = (
     'TIMES',
     'DIVIDE',
     'MODULO',
+    'POWER',
     'NOT',
     
     # assignment
@@ -50,6 +51,7 @@ tokens = (
     'RPAREN',
     'COMMENT',
     'COLON',
+    'COMMA',
 
 ) + tuple(reserved.values())
 
@@ -58,6 +60,7 @@ t_MINUS = r'-'
 t_TIMES = r'\*'
 t_DIVIDE = r'/'
 t_MODULO = r'%'
+t_POWER = r'\*\*'
 
 t_EQUALS = r'='
 t_PLUS_EQUALS = r'\+='

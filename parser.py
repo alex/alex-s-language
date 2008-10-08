@@ -9,6 +9,7 @@ from lexer import lexer, tokens
 precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE'),
+    ('left', 'POWER'),
     ('right', 'UMINUS'),
     ('right', 'UPLUS'),
 )
@@ -18,7 +19,8 @@ BINARY_OPS = {
     '-': operator.sub,
     '*': operator.mul,
     '/': operator.div,
-    '%': operator.mod
+    '%': operator.mod,
+    '**': operator.pow,
 }
 
 UNARY_OPS = {
@@ -72,6 +74,7 @@ def p_expression_binop(t):
                | expression TIMES expression
                | expression DIVIDE expression
                | expression MODULO expression
+               | expression POWER expression
     '''
     t[0] = BINARY_OPS[t[2]](t[1], t[3])
 
