@@ -1,12 +1,89 @@
 from ply import lex
 
-def track_indents(lexer):
-    while True:
-        token = lexer.token()
-        if token is not None:
-            yield token
+def _new_token(type_, lineno, value=None):
+    tok = lex.LexTok()
+    tok.type = type_
+    tok.lineno = lineno
+    tok.value = value
+    return tok
+
+def INDENT(lineno):
+    return _new_token('INDENT', lineno)
+
+def DEDENT(lineno):
+    return _new_token('DEDENT', lineno)
+
+def indent_needed(lexer, tokens):
+    lexer.at_line_start = at_line_start = True
+    indent = False
+    saw_colon = False
+    for token in tokens:
+        token.at_line_start = at_line_start
+        
+        if token.type == 'COLON':
+            at_line_start = False
+            indent = True
+            token.must_indent = False
+        elif token.type == 'NEWLINE':
+            at_line_start = True
+            token.must_indent = False
+        elif token.type == 'WHITESPACE':
+            assert token.at_line_start
+            at_line_start = True
+            token.must_indent = False
         else:
-            break
+            if indent:
+                token.must_indent = True
+            else:
+                token.must_indent = False
+            indent = False
+        yield token
+        lexer.at_line_start = at_line_start
+
+def track_indents(lexer):
+    tokens = iter(lexer.token, None)
+    tokens = indent_needed(lexer, tokens)
+    
+    levels = [0]
+    depth = 0
+    prev_was_whitespace = False
+    for token in tokens:
+        if token.type == 'WHITESPACE':
+            assert depth == 0
+            depth = len(token.value)
+            prev_was_whitespace = True
+            continue
+        
+        if token.type == 'NEWLINE':
+            depth = 0
+            if prev_was_whitespace or token.at_line_start:
+                continue
+            yield token
+            continue
+        
+        prev_was_whitespace = False
+        if token.must_indent:
+            if depth <= levels[-1]:
+                raise IndentationError("Expected an indented block")
+            levels.append(depth)
+            yield INDENT(token.lineno)
+        elif token.at_line_start:
+            if depth == levels[-1]:
+                pass
+            elif depth > levels[-1]:
+                raise IndentationError("Unexpected indent")
+            else:
+                try:
+                    i = levels.index(depth)
+                except ValueError:
+                    raise IndentationError("Inconsistant indentation")
+                for _ in xrange(i+1, len(levels)):
+                    yield DEDENT(token.lineno)
+        yield token
+    if len(levels) > 1:
+        assert token is not None
+        for _ in xrange(1, len(levels)):
+            yield DEDENT(token.lineno)
 
 class Lexer(object):
     def __init__(self):
