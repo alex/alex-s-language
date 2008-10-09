@@ -41,6 +41,12 @@ COMPARISON_OPS = {
 
 names = {}
 
+def p_statement(t):
+    '''
+    statement : statement NEWLINE
+    '''
+    t[0] = t[1]
+
 def p_statement_assign(t):
     '''
     statement : NAME EQUALS expression
@@ -142,7 +148,7 @@ def p_suite(t):
 def p_statements(t):
     '''
     statements : statements statement
-               | statement 
+               | statement
     '''
     if len(t) == 3:
         t[0] = t[1] + t[2]
