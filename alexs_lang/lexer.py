@@ -96,6 +96,7 @@ class Lexer(object):
     
     def build(self, **kwargs):
         self.lexer = lex.lex(object=self, **kwargs)
+        self._built = True
     
     def input(self, s):
         self.require_built()
@@ -120,6 +121,9 @@ class Lexer(object):
         'class': 'CLASS',
         'return': 'RETURN',
         'break': 'CONTINUE',
+        'and': 'AND',
+        'or': 'OR',
+        'not': 'NOT',
     }
     tokens = (
         # objects of sorts
@@ -138,7 +142,6 @@ class Lexer(object):
         'DIVIDE',
         'MODULO',
         'POWER',
-        'NOT',
         
         # assignment
         'EQUALS',
@@ -153,8 +156,6 @@ class Lexer(object):
         'GT',
         'LE',
         'GE',
-        'AND',
-        'OR',
         
         # syntax
         'LPAREN',
@@ -211,18 +212,6 @@ class Lexer(object):
     def t_RPAREN(self, t):
         r'\)'
         t.lexer.paren_count -= 1
-        return t
-    
-    def t_AND(self, t):
-        r'and'
-        return t
-
-    def t_OR(self, t):
-        r'or'
-        return t
-
-    def t_NOT(self, t):
-        'not'
         return t
 
     def t_FLOAT(self, t):
