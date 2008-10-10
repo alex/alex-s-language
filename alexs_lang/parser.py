@@ -48,13 +48,13 @@ def p_statement(t):
     '''
     t[0] = t[1]
 
-def p_statement_assign(t):
+def p_expression_assign(t):
     '''
-    statement : NAME EQUALS expression
-              | NAME PLUS_EQUALS expression
-              | NAME MINUS_EQUALS expression
-              | NAME TIMES_EQUALS expression
-              | NAME DIVIDE_EQUALS expression
+    expression : NAME EQUALS expression
+               | NAME PLUS_EQUALS expression
+               | NAME MINUS_EQUALS expression
+               | NAME TIMES_EQUALS expression
+               | NAME DIVIDE_EQUALS expression
     '''
     t[0] = names[t[1]] = ast.Assignment(t[1], t[3], t[2])
 
