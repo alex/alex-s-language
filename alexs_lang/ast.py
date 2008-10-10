@@ -5,3 +5,22 @@ class Node(object):
             children = []
         self.children = children
         self.leaf = leaf
+
+class Expression(object):
+    pass
+
+class BinaryOperation(Expression):
+    def __init__(self, left, right, op):
+        self.left = left
+        self.right = right
+        self.op = op
+
+class UnaryOperation(Expression):
+    def __init__(self, value, op):
+        self.value = value
+        self.op = op
+
+class Number(Expression):
+    def __init__(self, value):
+        self.value = value
+
