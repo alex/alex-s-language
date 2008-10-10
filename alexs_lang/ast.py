@@ -24,3 +24,14 @@ class Number(Expression):
     def __init__(self, value):
         self.value = value
 
+class Comparison(Expression):
+    def __init__(self, left, right, comp):
+        self.left = left
+        self.right = right
+        self.comp = comp
+
+class Assignment(Expression):
+    def __init__(self, left, right, op):
+        self.left = left
+        self.right = right
+        self.op = op

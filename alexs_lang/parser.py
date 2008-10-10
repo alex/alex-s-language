@@ -4,7 +4,8 @@ import operator
 
 from ply import yacc
 
-from lexer import Lexer
+from alexs_lang.lexer import Lexer
+from alexs_lang import ast
 
 precedence = (
     ('left', 'PLUS', 'MINUS'),
@@ -55,16 +56,7 @@ def p_statement_assign(t):
               | NAME TIMES_EQUALS expression
               | NAME DIVIDE_EQUALS expression
     '''
-    if t[2] == '=':
-        names[t[1]] = t[3]
-    elif t[2] == '+=':
-        names[t[1]] += t[3]
-    elif t[2] == '-=':
-        names[t[1]] -= t[3]
-    elif t[2] == '*=':
-        names[t[1]] *= t[3]
-    elif t[2] == '/=':
-        names[t[1]] /= t[3]
+    t[0] = names[t[1]] = ast.Assignment(t[1], t[3], t[2])
 
 def p_statement_expr(t):
     '''
@@ -82,7 +74,7 @@ def p_expression_binop(t):
                | expression MODULO expression
                | expression POWER expression
     '''
-    t[0] = BINARY_OPS[t[2]](t[1], t[3])
+    t[0] = ast.BinaryOperation(t[1], t[3], t[2])
 
 def p_expression_unaryop(t):
     '''
@@ -90,7 +82,7 @@ def p_expression_unaryop(t):
                | PLUS expression %prec UPLUS
                | NOT expression
     '''
-    t[0] = UNARY_OPS[t[1]](t[2])
+    t[0] = ast.UnaryOperation(t[2], t[1])
 
 def p_expression_group(t):
     '''
@@ -108,14 +100,14 @@ def p_expression_compare(t):
                | expression AND expression
                | expression OR expression
     '''
-    t[0] = COMPARISON_OPS[t[2]](t[1], t[3])
+    t[0] = ast.Comparison(t[1], t[3], t[2])
 
 def p_number(t):
     '''
     NUMBER : FLOAT
            | INTEGER
     '''
-    t[0] = t[1]
+    t[0] = ast.Number(t[1])
 
 def p_expression_value(t):
     '''
@@ -131,29 +123,6 @@ def p_expression_name(t):
     expression : NAME
     '''
     t[0] = names[t[1]]
-
-def p_statement_if(t):
-    '''
-    statement : IF expression COLON suite
-    '''
-    if t[2]:
-        t[0] = t[4]
-
-def p_suite(t):
-    '''
-    suite : NEWLINE INDENT statements DEDENT
-    '''
-    t[0] = t[3]
-
-def p_statements(t):
-    '''
-    statements : statements statement
-               | statement
-    '''
-    if len(t) == 3:
-        t[0] = t[1] + t[2]
-    else:
-        t[0] = t[1]
 
 def p_error(t):
     print "Syntax error at '%s'" % t.value
