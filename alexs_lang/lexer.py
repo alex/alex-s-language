@@ -198,10 +198,9 @@ class Lexer(object):
         if t.lexer.at_line_start and not t.lexer.paren_count:
             return t
     
-    def t_newline(self, t):
+    def t_NEWLINE(self, t):
         r'\n+'
         t.lexer.lineno += len(t.value)
-        t.type = 'NEWLINE'
         if not t.lexer.paren_count:
             return t
     
