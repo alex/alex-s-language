@@ -48,6 +48,12 @@ def p_statement(t):
     '''
     t[0] = t[1]
 
+def p_statement_expr(t):
+    '''
+    statement : expression
+    '''
+    t[0] = t[1]
+
 def p_expression_assign(t):
     '''
     expression : NAME EQUALS expression
@@ -57,13 +63,6 @@ def p_expression_assign(t):
                | NAME DIVIDE_EQUALS expression
     '''
     t[0] = ast.Assignment(ast.Name(t[1]), t[3], t[2])
-
-def p_statement_expr(t):
-    '''
-    statement : expression
-    '''
-    t[0] = t[1]
-    print t[0]
 
 def p_expression_binop(t):
     '''
