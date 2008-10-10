@@ -5,6 +5,7 @@ def _new_token(type_, lineno, value=None):
     tok.type = type_
     tok.lineno = lineno
     tok.value = value
+    tok.lexpos = 0
     return tok
 
 def INDENT(lineno):
