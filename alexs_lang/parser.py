@@ -56,7 +56,7 @@ def p_expression_assign(t):
                | NAME TIMES_EQUALS expression
                | NAME DIVIDE_EQUALS expression
     '''
-    t[0] = names[t[1]] = ast.Assignment(t[1], t[3], t[2])
+    t[0] = ast.Assignment(ast.Name(t[1]), t[3], t[2])
 
 def p_statement_expr(t):
     '''
@@ -122,7 +122,7 @@ def p_expression_name(t):
     '''
     expression : NAME
     '''
-    t[0] = names[t[1]]
+    t[0] = ast.Name(t[1])
 
 def p_error(t):
     print "Syntax error at '%s'" % t.value

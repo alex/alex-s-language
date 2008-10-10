@@ -35,3 +35,7 @@ class Assignment(Expression):
         self.left = left
         self.right = right
         self.op = op
+
+class Name(Expression):
+    def __init__(self, name):
+        self.name = name
