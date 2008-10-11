@@ -14,16 +14,24 @@ precedence = (
 )
 
 class Parser(object):
-    def build(self, **kwargs):
+    def __init__(self):
+        self._built = False
+    
+    def build(self, **kwargs):  
         self.lexer = Lexer()
-        self.tokens = lexer.tokens
-        self.parser = yacc.yacc(object=self)
+        self.tokens = self.lexer.tokens
+        self.parser = yacc.yacc(module=self)
     
     def parse(self, code):
+        self.require_built()
         n = ast.NodeList()
         for line in code:
             n.append(self.parser.parse(line, lexer=self.lexer))
         return n
+    
+    def require_built(self):
+        if not self._built:
+            self.build()
     
     def p_statement(self, t):
         '''
