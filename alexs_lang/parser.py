@@ -128,6 +128,22 @@ class Parser(object):
         expression : NAME
         '''
         t[0] = ast.Name(t[1])
+    
+    def p_arglist(self, t):
+        '''
+        arglist : arglist COMMA expression
+                | expression
+        '''
+        if len(t) == 2:
+            t[0] = [t[1]]
+        else:
+            t[0] = t[1] + [t[3]]
+    
+    def p_expression_function_call(self, t):
+        '''
+        expression : expression LPAREN arglist RPAREN
+        '''
+        t[0] = ast.FunctionCall(t[1], t[3])
 
     def p_error(self, t):
         print "Syntax error at '%s'" % t.value

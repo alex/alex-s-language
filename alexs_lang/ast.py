@@ -14,6 +14,10 @@ class NodeList(object):
     
     def __iter__(self):
         return iter(self.children)
+    
+    def calculate(self, context):
+        for node in self.children:
+            node.calculate(context)
 
 class Expression(object):
     def calculate(self):
@@ -122,3 +126,25 @@ class Name(Expression):
     
     def calculate(self, context):
         return context[self.name]
+
+class FunctionCall(Expression):
+    def __init__(self, name, arglist):
+        self.name = name
+        self.arglist = arglist
+    
+    def __str__(self):
+        return "<FunctionCall: %s(%s)>" % (self.name, ', '.join(self.arglist))
+    
+    def calculate(self, context):
+        self.name.calculate(context).calculate([x.calculate(context) for x in self.arglist])
+
+class Function(Expression):
+    def __init__(self, args, body):
+        self.args = args
+        self.body = body
+    
+    def __str__(self):
+        return "<Function:>"
+    
+    def calculate(self, context):
+        return self.body.calculate(dict(zip(args, context)))

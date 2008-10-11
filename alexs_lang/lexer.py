@@ -192,6 +192,7 @@ class Lexer(object):
     t_GE = r'>='
 
     t_COLON = r':'
+    t_COMMA = ','
     
     def t_WHITESPACE(self, t):
         r' [ ]+ '
