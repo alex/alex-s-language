@@ -15,7 +15,7 @@ def main():
             print '.',
         except AssertionError:
             print 'F',
-            failed.append(os.path.basename(f[:-2]))
+            failed.append(os.path.basename(f[:-3]))
     print
     if failed:
         print "The following tests failed:"

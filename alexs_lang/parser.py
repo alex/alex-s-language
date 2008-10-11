@@ -28,7 +28,7 @@ class Parser(object):
         for line in code:
             n.append(self.parser.parse(line, lexer=self.lexer))
         return n
-    
+
     def require_built(self):
         if not self._built:
             self.build()
@@ -144,6 +144,29 @@ class Parser(object):
         expression : expression LPAREN arglist RPAREN
         '''
         t[0] = ast.FunctionCall(t[1], t[3])
+    
+    def p_statement_if(self, t):
+        '''
+        statement : IF expression COLON suite
+        '''
+        t[0] = ast.If(t[2], t[4])
+
+    def p_statements(self, t):
+        '''
+        statements : statements statement
+                   | statement
+        '''
+        if len(t) == 2:
+            t[0] = ast.NodeList([t[1]])
+        else:
+            t[1].append(t[2])
+            t[0] = t[1]
+
+    def p_suite(self, t):
+        '''
+        suite : NEWLINE INDENT statements DEDENT
+        '''
+        t[0] = t[3]
 
     def p_error(self, t):
         print "Syntax error at '%s'" % t.value
