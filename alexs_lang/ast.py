@@ -1,3 +1,5 @@
+import operator
+
 class NodeList(object):
     def __init__(self, children=None):
         if children is None:
@@ -8,12 +10,22 @@ class NodeList(object):
         self.children.append(val)
     
     def __str__(self):
-        return '\n'.join(str(x) for x in self.children)
+        return '\n'.join(str(x) for x in self)
+    
+    def __iter__(self):
+        return iter(self.children)
 
 class Expression(object):
-    pass
+    def calculate(self):
+        raise NotImplementedError()
 
 class BinaryOperation(Expression):
+    OPS = {
+        '+': operator.add,
+        '-': operator.sub,
+        '*': operator.mul,
+        '/': operator.div,
+    }
     def __init__(self, left, right, op):
         self.left = left
         self.right = right
@@ -21,14 +33,25 @@ class BinaryOperation(Expression):
     
     def __str__(self):
         return "<BinaryOperation: %s %s %s>" % (self.left, self.op, self.right)
+    
+    def calculate(self, context):
+        return self.OPS[self.op](self.left.calculate(context), self.right.calculate(context))
 
 class UnaryOperation(Expression):
+    OPS = {
+        '-': operator.neg,
+        '+': operator.pos,
+        'not': operator.not_,
+    }
     def __init__(self, value, op):
         self.value = value
         self.op = op
     
     def __str__(self):
         return "<UnaryOperation: %s %s>" % (self.op, self.value)
+    
+    def calculate(self, context):
+        return self.OPS[self.op](self.value.calculate(context))
 
 class Number(Expression):
     def __init__(self, value):
@@ -36,6 +59,9 @@ class Number(Expression):
     
     def __str__(self):
         return "<Number: %s>" % self.value
+    
+    def calculate(self, context):
+        return self.value
 
 class Boolean(Expression):
     def __init__(self, value):
@@ -43,28 +69,49 @@ class Boolean(Expression):
     
     def __str__(self):
         return "<Boolean: %s>" % self.value
+    
+    def calculate(self, context):
+        return self.value
 
 class NoneVal(Expression):
     def __str__(self):
         return "<None>"
+    
+    def calculate(self, context):
+        return None
 
 class Comparison(Expression):
-    def __init__(self, left, right, comp):
-        self.left = left
-        self.right = right
-        self.comp = comp
-    
-    def __str__(self):
-        return "<Comparison: %s %s %s>" % (self.left, self.comp, self.right)
-
-class Assignment(Expression):
+    OPS = {
+        '==': operator.eq,
+        '!=': operator.ne,
+        '>': operator.gt,
+        '<': operator.lt,
+        '>=': operator.ge,
+        '<=': operator.le,
+    }
     def __init__(self, left, right, op):
         self.left = left
         self.right = right
-        self.op = op
+        self.op = comp
     
     def __str__(self):
-        return "<Assignment: %s %s %s>" % (self.left, self.op, self.right)
+        return "<Comparison: %s %s %s>" % (self.left, self.op, self.right)
+    
+    def calculate(self, context):
+        return self.OPS[self.op](self.left.calculate(context), self.right.calculate(context))
+
+class Assignment(Expression):
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+    
+    def __str__(self):
+        return "<Assignment: %s = %s>" % (self.left, self.right)
+    
+    def calculate(self, context):
+        val = self.right.calculate(context)
+        context[self.left.name] = val
+        return val
 
 class Name(Expression):
     def __init__(self, name):
@@ -72,3 +119,6 @@ class Name(Expression):
     
     def __str__(self):
         return "<Name: %s>" % self.name
+    
+    def calculate(self, context):
+        return context[self.name]

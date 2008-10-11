@@ -53,7 +53,10 @@ class Parser(object):
                    | NAME TIMES_EQUALS expression
                    | NAME DIVIDE_EQUALS expression
         '''
-        t[0] = ast.Assignment(ast.Name(t[1]), t[3], t[2])
+        if t[2] == '=':
+            t[0] = ast.Assignment(ast.Name(t[1]), t[3])
+        else:
+            t[0] = ast.Assignment(ast.Name(t[1]), ast.BinaryOperation(ast.Name(t[1]), t[3], t[2][0]))
 
     def p_expression_binop(self, t):
         '''
