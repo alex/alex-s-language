@@ -107,6 +107,7 @@ def p_expression_constant(t):
                | BOOL
                | none
     '''
+    t[0] = t[1]
 
 def p_number(t):
     '''
