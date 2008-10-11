@@ -51,25 +51,18 @@ def p_statement(t):
 def p_statement_expr(t):
     '''
     statement : expression
-              | assignment_statement
     '''
     t[0] = t[1]
 
-def p_assignment_statement(t):
+def p_expression(t):
     '''
-    assignment_statement : NAME EQUALS expression
-                         | NAME PLUS_EQUALS expression
-                         | NAME MINUS_EQUALS expression
-                         | NAME TIMES_EQUALS expression
-                         | NAME DIVIDE_EQUALS expression
+    expression : NAME EQUALS expression
+               | NAME PLUS_EQUALS expression
+               | NAME MINUS_EQUALS expression
+               | NAME TIMES_EQUALS expression
+               | NAME DIVIDE_EQUALS expression
     '''
     t[0] = ast.Assignment(ast.Name(t[1]), t[3], t[2])
-
-def p_assignment_statement_multi(t):
-    '''
-    assignment_statement : NAME EQUALS assignment_statement
-    '''
-    t[0] = ast.Assignment(ast.Name(t[1]), t[3].right, t[2])
 
 def p_expression_binop(t):
     '''
