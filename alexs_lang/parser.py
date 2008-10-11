@@ -5,15 +5,15 @@ from ply import yacc
 from alexs_lang.lexer import Lexer
 from alexs_lang import ast
 
-precedence = (
-    ('left', 'PLUS', 'MINUS'),
-    ('left', 'TIMES', 'DIVIDE'),
-    ('right', 'UMINUS'),
-    ('right', 'UPLUS'),
-    ('left', 'POWER'),
-)
-
 class Parser(object):
+    precedence = (
+        ('left', 'PLUS', 'MINUS'),
+        ('left', 'TIMES', 'DIVIDE'),
+        ('right', 'UMINUS'),
+        ('right', 'UPLUS'),
+        ('left', 'POWER'),
+    )
+
     def __init__(self):
         self._built = False
     
