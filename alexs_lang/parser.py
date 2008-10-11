@@ -101,6 +101,13 @@ def p_expression_compare(t):
     '''
     t[0] = ast.Comparison(t[1], t[3], t[2])
 
+def p_expression_constant(t):
+    '''
+    expression : NUMBER
+               | BOOL
+               | none
+    '''
+
 def p_number(t):
     '''
     NUMBER : FLOAT
@@ -108,14 +115,18 @@ def p_number(t):
     '''
     t[0] = ast.Number(t[1])
 
-def p_expression_value(t):
+def p_bool(t):
     '''
-    expression : NUMBER
-               | TRUE
-               | FALSE
-               | NONE
+    BOOL : TRUE
+         | FALSE
     '''
-    t[0] = t[1]
+    t[0] = ast.Boolean(t[1])
+
+def p_none(t):
+    '''
+    none : NONE
+    '''
+    t[0] = ast.NoneVal()
 
 def p_expression_name(t):
     '''
@@ -130,21 +141,11 @@ lexer = Lexer()
 tokens = lexer.tokens
 parser = yacc.yacc()
 
-if __name__ == '__main__':
-    import sys
-    if sys.argv[1:]:
-        for line in open(sys.argv[1]):
-            parser.parse(line, lexer=lexer)
-    else:
-        while True:
-            try:
-                s = raw_input('alex > ')
-            except EOFError:
-                print
-                break
-            except KeyboardInterrupt:
-                print
-                continue
-            if not s:
-                continue
-            parser.parse(s, lexer = lexer)
+def parse(code):
+    '''
+    code should be an iterable, where each line is a line of code
+    '''
+    n = ast.NodeList()
+    for line in code:
+        n.append(parser.parse(line, lexer=lexer))
+    return n

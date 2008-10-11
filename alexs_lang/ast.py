@@ -1,10 +1,14 @@
-class Node(object):
-    def __init__(self, type_, children=None, leaf=None):
-        self.type = type_
+class NodeList(object):
+    def __init__(self, children=None):
         if children is None:
             children = []
         self.children = children
-        self.leaf = leaf
+    
+    def append(self, val):
+        self.children.append(val)
+    
+    def __str__(self):
+        return '\n'.join(str(x) for x in self.children)
 
 class Expression(object):
     pass
@@ -32,6 +36,17 @@ class Number(Expression):
     
     def __str__(self):
         return "<Number: %s>" % self.value
+
+class Boolean(Expression):
+    def __init__(self, value):
+        self.value = value
+    
+    def __str__(self):
+        return "<Boolean: %s>" % self.value
+
+class NoneVal(Expression):
+    def __str__(self):
+        return "<None>"
 
 class Comparison(Expression):
     def __init__(self, left, right, comp):
