@@ -92,6 +92,8 @@ class Comparison(Expression):
         '<': operator.lt,
         '>=': operator.ge,
         '<=': operator.le,
+        'and': operator.and_,
+        'or': operator.or_,
     }
     def __init__(self, left, right, op):
         self.left = left
