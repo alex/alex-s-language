@@ -66,7 +66,7 @@ def track_indents(lexer):
         prev_was_whitespace = False
         if token.must_indent:
             if depth <= levels[-1]:
-                raise IndentationError("Expected an indented block")
+                raise IndentationError("Expected an indented block on line %s" % token.lineno)
             levels.append(depth)
             yield INDENT(token.lineno)
         elif token.at_line_start:
@@ -81,6 +81,7 @@ def track_indents(lexer):
                     raise IndentationError("Inconsistant indentation")
                 for _ in xrange(i+1, len(levels)):
                     yield DEDENT(token.lineno)
+                    levels.pop()
         yield token
     if len(levels) > 1:
         assert token is not None
