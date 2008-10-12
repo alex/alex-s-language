@@ -25,8 +25,7 @@ class Parser(object):
     def parse(self, code):
         self.require_built()
         n = ast.NodeList()
-        for line in code:
-            n.append(self.parser.parse(line, lexer=self.lexer))
+        n.append(self.parser.parse(code, lexer=self.lexer))
         return n
 
     def require_built(self):
