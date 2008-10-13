@@ -158,6 +158,7 @@ class Lexer(object):
         'GT',
         'LE',
         'GE',
+        'NE',
         
         # syntax
         'LPAREN',
@@ -191,6 +192,7 @@ class Lexer(object):
     t_GT = r'>'
     t_LE = r'<='
     t_GE = r'>='
+    t_NE = r'!='
 
     t_COLON = r':'
     t_COMMA = ','
