@@ -117,18 +117,24 @@ class Name(Expression):
         return context[self.name]
 
 class If(NodeList):
-    def __init__(self, condition, main_body, else_body=None):
+    def __init__(self, condition, main_body, else_body=None, elifs=None):
         self.condition = condition
         self.main_body = main_body
         self.else_body = else_body
+        # this is a list of two touples, in the form of (condition, body)
+        self.elifs = elifs
     
     def __str__(self):
         return "<If: %s>" % self.condition
     
     def calculate(self, context):
         if self.condition.calculate(context):
-            return self.main_body.calculate(context)
-        elif self.else_body is not None:
+            return self.main_body.calculate(context)        
+        if self.elifs is not None:
+            for condition, body in self.elifs:
+                if condition.calculate(context):
+                    return body.calculate(context)
+        if self.else_body is not None:
             return self.else_body.calculate(context)
 
 class FunctionCall(Expression):
@@ -137,7 +143,7 @@ class FunctionCall(Expression):
         self.arglist = arglist
     
     def __str__(self):
-        return "<FunctionCall: %s(%s)>" % (self.name, ', '.join(self.arglist))
+        return "<FunctionCall: %s(%s)>" % (self.name, ', '.join(str(x) for x in self.arglist))
     
     def calculate(self, context):
         self.name.calculate(context).calculate([x.calculate(context) for x in self.arglist])

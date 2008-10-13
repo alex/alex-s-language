@@ -164,6 +164,34 @@ class Parser(object):
         '''
         t[0] = ast.If(t[2], t[4], t[7])
     
+    def p_if_statement_elif(self, t):
+        '''
+        if_statement : IF expression COLON suite elif_statements
+        '''
+        t[0] = ast.If(t[2], t[4], None, t[5])
+    
+    def p_if_statements_elif_else(self, t):
+        '''
+        if_statement : IF expression COLON suite elif_statements ELSE COLON suite
+        '''
+        t[0] = ast.If(t[2], t[4], t[8], t[5])
+    
+    def p_elif_statements(self, t):
+        '''
+        elif_statements : elif_statements elif
+                        | elif
+        '''
+        if len(t) == 2:
+            t[0] = [t[1]]
+        else:
+            t[0] = t[1] + [t[2]]
+    
+    def p_elif(self, t):
+        '''
+        elif : ELIF expression COLON suite
+        '''
+        t[0] = (t[2], t[4])
+    
     def p_suite(self, t):
         '''
         suite : NEWLINE INDENT statement_list DEDENT
