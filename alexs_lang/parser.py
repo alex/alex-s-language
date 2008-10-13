@@ -58,15 +58,15 @@ class Parser(object):
                              | NAME DIVIDE_EQUALS expression
         '''
         if t[2] == '=':
-            t[0] = ast.Assignment(ast.Name(t[1]), t[3])
+            t[0] = ast.Assignment([ast.Name(t[1])], t[3])
         else:
-            t[0] = ast.Assignment(ast.Name(t[1]), ast.BinaryOperation(ast.Name(t[1]), t[3], t[2][0]))
+            t[0] = ast.Assignment([ast.Name(t[1])], ast.BinaryOperation(ast.Name(t[1]), t[3], t[2][0]))
 
     def p_assignment_statement_multi(self, t):
         '''
         assignment_statement : NAME EQUALS assignment_statement
         '''
-        t[0] = ast.Assignment(ast.Name(t[1]), t[3].right)
+        t[0] = ast.Assignment([ast.Name(t[1])]+t[3].left, t[3].right)
 
     def p_expression_binary(self, t):
         '''

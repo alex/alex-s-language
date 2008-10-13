@@ -29,6 +29,14 @@ class BinaryOperation(Expression):
         '-': operator.sub,
         '*': operator.mul,
         '/': operator.div,
+        '==': operator.eq,
+        '!=': operator.ne,
+        '>': operator.gt,
+        '<': operator.lt,
+        '>=': operator.ge,
+        '<=': operator.le,
+        'and': operator.and_,
+        'or': operator.or_,
     }
     def __init__(self, left, right, op):
         self.left = left
@@ -84,28 +92,6 @@ class NoneVal(Expression):
     def calculate(self, context):
         return None
 
-class Comparison(Expression):
-    OPS = {
-        '==': operator.eq,
-        '!=': operator.ne,
-        '>': operator.gt,
-        '<': operator.lt,
-        '>=': operator.ge,
-        '<=': operator.le,
-        'and': operator.and_,
-        'or': operator.or_,
-    }
-    def __init__(self, left, right, op):
-        self.left = left
-        self.right = right
-        self.op = comp
-    
-    def __str__(self):
-        return "<Comparison: %s %s %s>" % (self.left, self.op, self.right)
-    
-    def calculate(self, context):
-        return self.OPS[self.op](self.left.calculate(context), self.right.calculate(context))
-
 class Assignment(Expression):
     def __init__(self, left, right):
         self.left = left
@@ -116,8 +102,8 @@ class Assignment(Expression):
     
     def calculate(self, context):
         val = self.right.calculate(context)
-        context[self.left.name] = val
-        return val
+        for var in self.left:
+            context[var.name] = val
 
 class Name(Expression):
     def __init__(self, name):
