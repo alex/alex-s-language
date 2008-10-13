@@ -121,7 +121,7 @@ class If(NodeList):
         self.condition = condition
         self.main_body = main_body
         self.else_body = else_body
-        # this is a list of two touples, in the form of (condition, body)
+        # this is a list of two tuples, in the form of (condition, body)
         self.elifs = elifs
     
     def __str__(self):
