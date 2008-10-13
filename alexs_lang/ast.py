@@ -29,6 +29,7 @@ class BinaryOperation(Expression):
         '-': operator.sub,
         '*': operator.mul,
         '/': operator.div,
+        '**': operator.pow,
         '==': operator.eq,
         '!=': operator.ne,
         '>': operator.gt,

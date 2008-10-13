@@ -3,3 +3,7 @@ print(2)
 a = b = 3
 print(a)
 print(a+b)
+print(a-b)
+print(a*b)
+print(a/b)
+print(a**b)
