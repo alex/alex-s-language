@@ -168,4 +168,5 @@ class Parser(object):
         t[0] = t[3]
 
     def p_error(self, t):
-        print "Syntax error at '%s'" % t.value
+        import sys
+        sys.stderr.write("Syntax error at '%s' on line %s.\n" % (t.value, t.lineno))
