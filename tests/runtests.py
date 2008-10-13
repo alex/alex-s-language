@@ -18,9 +18,9 @@ def main():
         p = subprocess.Popen([executable, f], stdout=subprocess.PIPE)
         try:
             assert p.stdout.read() == open("%sout" % f[:-2]).read()
-            print '.',
+            sys.stdout.write('.')
         except AssertionError:
-            print 'F',
+            sys.stdout.write('F')
             failed.append(os.path.basename(f[:-3]))
     print
     if failed:
