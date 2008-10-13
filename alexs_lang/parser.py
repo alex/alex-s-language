@@ -31,16 +31,10 @@ class Parser(object):
     def require_built(self):
         if not self._built:
             self.build()
-    
-    def p_statement(self, t):
-        '''
-        statement : statement NEWLINE
-        '''
-        t[0] = t[1]
 
     def p_statement_expr(self, t):
         '''
-        statement : expression
+        statement : expression NEWLINE
         '''
         t[0] = t[1]
 
