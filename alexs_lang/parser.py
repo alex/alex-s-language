@@ -158,6 +158,12 @@ class Parser(object):
         '''
         t[0] = ast.If(t[2], t[4])
     
+    def p_if_statement_else(self, t):
+        '''
+        if_statement : IF expression COLON suite ELSE COLON suite
+        '''
+        t[0] = ast.If(t[2], t[4], t[7])
+    
     def p_suite(self, t):
         '''
         suite : NEWLINE INDENT statement_list DEDENT

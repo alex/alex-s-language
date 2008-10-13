@@ -130,16 +130,19 @@ class Name(Expression):
         return context[self.name]
 
 class If(NodeList):
-    def __init__(self, condition, body):
+    def __init__(self, condition, main_body, else_body=None):
         self.condition = condition
-        self.body = body
+        self.main_body = main_body
+        self.else_body = else_body
     
     def __str__(self):
         return "<If: %s>" % self.condition
     
     def calculate(self, context):
         if self.condition.calculate(context):
-            return self.body.calculate(context)
+            return self.main_body.calculate(context)
+        elif self.else_body is not None:
+            return self.else_body.calculate(context)
 
 class FunctionCall(Expression):
     def __init__(self, name, arglist):
