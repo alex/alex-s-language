@@ -31,7 +31,18 @@ class Parser(object):
     def require_built(self):
         if not self._built:
             self.build()
-    
+
+    def p_statement_list(self, t):
+        '''
+        statement_list : statement_list statement
+                       | statement
+        '''
+        if len(t) == 2:
+            t[0] = ast.NodeList([t[1]])
+        else:
+            t[1].append(t[2])
+            t[0] = t[1]
+
     def p_statement(self, t):
         '''
         statement : assignment_statement NEWLINE
