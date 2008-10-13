@@ -24,9 +24,7 @@ class Parser(object):
     
     def parse(self, code):
         self.require_built()
-        n = ast.NodeList()
-        n.append(self.parser.parse(code, lexer=self.lexer))
-        return n
+        return self.parser.parse(code, lexer=self.lexer)
 
     def require_built(self):
         if not self._built:
@@ -47,6 +45,7 @@ class Parser(object):
         '''
         statement : assignment_statement NEWLINE
                   | expression NEWLINE
+                  | if_statement
         '''
         t[0] = t[1]
 
@@ -152,6 +151,18 @@ class Parser(object):
         expression : expression LPAREN arglist RPAREN
         '''
         t[0] = ast.FunctionCall(t[1], t[3])
+    
+    def p_if_statement(self, t):
+        '''
+        if_statement : IF expression COLON suite
+        '''
+        t[0] = ast.If(t[2], t[4])
+    
+    def p_suite(self, t):
+        '''
+        suite : NEWLINE INDENT statement_list DEDENT
+        '''
+        t[0] = t[3]
 
     def p_error(self, t):
         import sys
