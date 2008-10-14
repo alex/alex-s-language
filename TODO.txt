@@ -1,7 +1,7 @@
 TODO
 ====
 
- * def statements
+ * scoping (needed next, in some form, for recursive functions)
  * for statements
  * class's
  * assembly generation
