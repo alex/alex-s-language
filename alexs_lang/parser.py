@@ -46,6 +46,8 @@ class Parser(object):
         statement : assignment_statement NEWLINE
                   | expression NEWLINE
                   | if_statement
+                  | def_statement
+                  | return_statement NEWLINE
         '''
         t[0] = t[1]
 
@@ -140,15 +142,24 @@ class Parser(object):
         '''
         arglist : arglist COMMA expression
                 | expression
+                |
         '''
         if len(t) == 2:
             t[0] = [t[1]]
+        elif len(t) == 1:
+            t[0] = []
         else:
             t[0] = t[1] + [t[3]]
 
+    def p_functions(self, t):
+        '''
+        functions : NAME
+        '''
+        t[0] = ast.Name(t[1])
+
     def p_expression_function_call(self, t):
         '''
-        expression : expression LPAREN arglist RPAREN
+        expression : functions LPAREN arglist RPAREN
         '''
         t[0] = ast.FunctionCall(t[1], t[3])
     
@@ -191,6 +202,31 @@ class Parser(object):
         elif : ELIF expression COLON suite
         '''
         t[0] = (t[2], t[4])
+    
+    def p_def_statement(self, t):
+        '''
+        def_statement : DEF NAME LPAREN args RPAREN COLON suite
+        '''
+        t[0] = ast.Assignment([ast.Name(t[2])], ast.Function(t[4], t[7]))
+    
+    def p_args(self, t):
+        '''
+        args : args COMMA NAME
+             | NAME
+             |
+        '''
+        if len(t) == 2:
+            t[0] = [t[1]]
+        elif len(t) == 1:
+            t[0] = []
+        else:
+            t[0] = t[1] + [t[3]]
+    
+    def p_return_statement(self, t):
+        '''
+        return_statement : RETURN expression
+        '''
+        t[0] = ast.Return(t[2])
     
     def p_suite(self, t):
         '''

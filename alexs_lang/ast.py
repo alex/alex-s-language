@@ -17,7 +17,9 @@ class NodeList(object):
     
     def calculate(self, context):
         for node in self.children:
-            node.calculate(context)
+            n = node.calculate(context)
+            if n is not None:
+                return n
 
 class Expression(object):
     def calculate(self):
@@ -146,7 +148,9 @@ class FunctionCall(Expression):
         return "<FunctionCall: %s(%s)>" % (self.name, ', '.join(str(x) for x in self.arglist))
     
     def calculate(self, context):
-        self.name.calculate(context).calculate([x.calculate(context) for x in self.arglist])
+        args = [x.calculate(context) for x in self.arglist]
+        
+        return self.name.calculate(context).calculate()
 
 class Function(Expression):
     def __init__(self, args, body):
@@ -157,4 +161,25 @@ class Function(Expression):
         return "<Function:>"
     
     def calculate(self, context):
-        return self.body.calculate(dict(zip(args, context)))
+        return FunctionBody(self.args, self.body)
+
+class FunctionBody(Expression):
+    def __init__(self, args, body):
+        self.args = args
+        self.body = body
+        
+    def __str__(self):
+        return "<FunctionBody>"
+    
+    def calculate(self, context):
+        return self.body.calculate(dict(zip(self.args, context)))
+
+class Return(Expression):
+    def __init__(self, value):
+        self.value = value
+    
+    def __str__(self):
+        return "<Return>"
+    
+    def calculate(self, context):
+        return self.value.calculate(context)
