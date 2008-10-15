@@ -38,11 +38,19 @@ class PrintFunction(ast.FunctionBody):
     def calculate(self, args, context):
         print args[0]
 
+class RangeFunction(ast.FunctionBody):
+    def __init__(self):
+        pass
+    
+    def calculate(self, arg, context):
+        return range(*arg)
+
 class Interpreter(object):
     def __init__(self, code):
         self.code = code
         self.context = ContextDictionary()
         self.context['print'] = PrintFunction()
+        self.context['range'] = RangeFunction()
     
     def execute(self):
         self.parse()
