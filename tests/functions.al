@@ -8,7 +8,11 @@ def fib(n):
         return 1
     return fib(n-1) + fib(n-2)
 
+def four_chan():
+    print(9001)
+
 print(fact(2))
 print(fact(3))
 print(fact(7))
 print(fib(7))
+four_chan()

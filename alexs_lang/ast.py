@@ -157,12 +157,12 @@ class Function(Expression):
         self.body = body
     
     def __str__(self):
-        return "<Function:>"
+        return "<Function: (%s)>" % ','.join(str(x) for x in self.args)
     
     def calculate(self, context):
         return FunctionBody(self.args, self.body)
 
-class FunctionBody(Expression):
+class FunctionBody(NodeList):
     def __init__(self, args, body):
         self.args = args
         self.body = body
@@ -183,7 +183,7 @@ class Return(Expression):
         self.value = value
     
     def __str__(self):
-        return "<Return>"
+        return "<Return: %s>" % self.value
     
     def calculate(self, context):
         return self.value.calculate(context)
