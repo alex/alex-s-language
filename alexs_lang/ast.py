@@ -149,9 +149,8 @@ class FunctionCall(Expression):
     
     def calculate(self, context):
         args = [x.calculate(context) for x in self.arglist]
+        return self.name.calculate(context).calculate(args, context)
         
-        return self.name.calculate(context).calculate()
-
 class Function(Expression):
     def __init__(self, args, body):
         self.args = args
@@ -171,8 +170,13 @@ class FunctionBody(Expression):
     def __str__(self):
         return "<FunctionBody>"
     
-    def calculate(self, context):
-        return self.body.calculate(dict(zip(self.args, context)))
+    def calculate(self, args, context):
+        context.enter_local()
+        for key, val in zip(self.args, args):
+            context[key] = val
+        result =  self.body.calculate(context)
+        context.leave_local()
+        return result
 
 class Return(Expression):
     def __init__(self, value):
