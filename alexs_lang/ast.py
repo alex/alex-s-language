@@ -187,3 +187,14 @@ class Return(Expression):
     
     def calculate(self, context):
         return self.value.calculate(context)
+
+class For(NodeList):
+    def __init__(self, var_name, iterable, body):
+        self.var_name = var_name
+        self.iterable = iterable
+        self.body = body
+    
+    def calculate(self, context):
+        for i in self.iterable.calculate(context):
+            context[self.var_name] = i
+            self.body.calculate(context)

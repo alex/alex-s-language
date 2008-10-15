@@ -49,6 +49,7 @@ class Parser(object):
                   | if_statement
                   | def_statement
                   | return_statement NEWLINE
+                  | for_statement
         '''
         t[0] = t[1]
 
@@ -228,6 +229,12 @@ class Parser(object):
         return_statement : RETURN expression
         '''
         t[0] = ast.Return(t[2])
+    
+    def p_for_statement(self, t):
+        '''
+        for_statement : FOR NAME IN expression COLON suite
+        '''
+        t[0] = ast.For(t[2], t[4], t[6])
     
     def p_suite(self, t):
         '''
