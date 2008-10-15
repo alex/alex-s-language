@@ -11,4 +11,4 @@ def fib(n):
 print(fact(2))
 print(fact(3))
 print(fact(7))
-print(fib(3))
+print(fib(7))
