@@ -197,4 +197,6 @@ class For(NodeList):
     def calculate(self, context):
         for i in self.iterable.calculate(context):
             context[self.var_name] = i
-            self.body.calculate(context)
+            result = self.body.calculate(context)
+            if result is not None:
+                return result
