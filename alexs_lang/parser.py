@@ -7,6 +7,7 @@ from alexs_lang import ast
 
 class Parser(object):
     precedence = (
+        ('left', 'BIN_COMP'),
         ('left', 'PLUS', 'MINUS'),
         ('left', 'TIMES', 'DIVIDE'),
         ('right', 'UMINUS'),
@@ -80,12 +81,12 @@ class Parser(object):
                    | expression POWER expression
                    | expression AND expression
                    | expression OR expression
-                   | expression EQ expression
-                   | expression LT expression
-                   | expression GT expression
-                   | expression LE expression
-                   | expression GE expression
-                   | expression NE expression
+                   | expression EQ expression %prec BIN_COMP
+                   | expression LT expression %prec BIN_COMP
+                   | expression GT expression %prec BIN_COMP
+                   | expression LE expression %prec BIN_COMP
+                   | expression GE expression %prec BIN_COMP
+                   | expression NE expression %prec BIN_COMP
         '''
         t[0] = ast.BinaryOperation(t[1], t[3], t[2])
 
