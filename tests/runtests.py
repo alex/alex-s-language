@@ -22,6 +22,7 @@ def main():
         except AssertionError:
             sys.stdout.write('F')
             failed.append(os.path.basename(f[:-3]))
+        sys.stdout.flush()
     print
     if failed:
         print "The following tests failed:"
