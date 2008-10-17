@@ -1,7 +1,7 @@
 TODO
 ====
 
- * scoping (needed next, in some form, for recursive functions)
- * for statements
+ * strings
+ * dictionarys
  * class's
  * assembly generation
