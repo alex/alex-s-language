@@ -163,6 +163,9 @@ class Lexer(object):
         # syntax
         'LPAREN',
         'RPAREN',
+        'LBRACKET',
+        'RBRACKET',
+        
         'COMMENT',
         'COLON',
         'COMMA',
@@ -193,7 +196,10 @@ class Lexer(object):
     t_LE = r'<='
     t_GE = r'>='
     t_NE = r'!='
-
+    
+    t_LBRACKET = r'\['
+    t_RBRACKET = r'\]'
+    
     t_COLON = r':'
     t_COMMA = ','
     

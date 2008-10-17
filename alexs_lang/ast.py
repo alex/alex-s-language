@@ -200,3 +200,13 @@ class For(NodeList):
             result = self.body.calculate(context)
             if result is not None:
                 return result
+
+class List(Expression):
+    def __init__(self, value):
+        self.value = value
+    
+    def __str__(self):
+        return "<List: %s>" % self.value
+    
+    def calculate(self, context):
+        return [x.calculate(context) for x in self.value]

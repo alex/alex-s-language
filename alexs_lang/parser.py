@@ -236,6 +236,12 @@ class Parser(object):
         '''
         t[0] = ast.For(t[2], t[4], t[6])
     
+    def p_expression_list(self, t):
+        '''
+        expression : LBRACKET arglist RBRACKET
+        '''
+        t[0] = ast.List(t[2])
+    
     def p_suite(self, t):
         '''
         suite : NEWLINE INDENT statement_list DEDENT
