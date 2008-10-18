@@ -6,3 +6,6 @@ for i in x:
 x += [[]]
 for i in x:
     print(i)
+print(x[1])
+x[1] = 4
+print(x[1])

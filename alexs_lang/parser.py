@@ -52,25 +52,38 @@ class Parser(object):
                   | for_statement
         '''
         t[0] = t[1]
-
+    
+    def p_assignable(self, t):
+        '''
+        assignable : name
+                   | subscript
+        '''
+        t[0] = t[1]
+    
+    def p_name(self, t):
+        '''
+        name : NAME
+        '''
+        t[0] = ast.Name(t[1])
+    
     def p_assignment_statement(self, t):
         '''
-        assignment_statement : NAME EQUALS expression
-                             | NAME PLUS_EQUALS expression
-                             | NAME MINUS_EQUALS expression
-                             | NAME TIMES_EQUALS expression
-                             | NAME DIVIDE_EQUALS expression
+        assignment_statement : assignable EQUALS expression
+                             | assignable PLUS_EQUALS expression
+                             | assignable MINUS_EQUALS expression
+                             | assignable TIMES_EQUALS expression
+                             | assignable DIVIDE_EQUALS expression
         '''
         if t[2] == '=':
-            t[0] = ast.Assignment([ast.Name(t[1])], t[3])
+            t[0] = ast.Assignment([t[1]], t[3])
         else:
-            t[0] = ast.Assignment([ast.Name(t[1])], ast.BinaryOperation(ast.Name(t[1]), t[3], t[2][0]))
+            t[0] = ast.Assignment([t[1]], ast.BinaryOperation(t[1], t[3], t[2][0]))
 
     def p_assignment_statement_multi(self, t):
         '''
-        assignment_statement : NAME EQUALS assignment_statement
+        assignment_statement : assignable EQUALS assignment_statement
         '''
-        t[0] = ast.Assignment([ast.Name(t[1])]+t[3].left, t[3].right)
+        t[0] = ast.Assignment([t[1]]+t[3].left, t[3].right)
 
     def p_expression_binary(self, t):
         '''
@@ -136,9 +149,9 @@ class Parser(object):
 
     def p_expression_name(self, t):
         '''
-        expression : NAME
+        expression : name
         '''
-        t[0] = ast.Name(t[1])
+        t[0] = t[1]
 
     def p_arglist(self, t):
         '''
@@ -155,9 +168,9 @@ class Parser(object):
 
     def p_functions(self, t):
         '''
-        functions : NAME
+        functions : name
         '''
-        t[0] = ast.Name(t[1])
+        t[0] = t[1]
 
     def p_expression_function_call(self, t):
         '''
@@ -207,9 +220,9 @@ class Parser(object):
     
     def p_def_statement(self, t):
         '''
-        def_statement : DEF NAME LPAREN args RPAREN COLON suite
+        def_statement : DEF name LPAREN args RPAREN COLON suite
         '''
-        t[0] = ast.Assignment([ast.Name(t[2])], ast.Function(t[4], t[7]))
+        t[0] = ast.Assignment([t[2]], ast.Function(t[4], t[7]))
     
     def p_args(self, t):
         '''
@@ -241,6 +254,18 @@ class Parser(object):
         expression : LBRACKET arglist RBRACKET
         '''
         t[0] = ast.List(t[2])
+    
+    def p_expression_subscript(self, t):
+        '''
+        expression : subscript
+        '''
+        t[0] = t[1]
+    
+    def p_subscript(self, t):
+        '''
+        subscript : expression LBRACKET expression RBRACKET
+        '''
+        t[0] = ast.Subscript(t[1], t[3])
     
     def p_suite(self, t):
         '''

@@ -106,7 +106,7 @@ class Assignment(Expression):
     def calculate(self, context):
         val = self.right.calculate(context)
         for var in self.left:
-            context[var.name] = val
+            var.assign(val, context)
 
 class Name(Expression):
     def __init__(self, name):
@@ -114,6 +114,9 @@ class Name(Expression):
     
     def __str__(self):
         return "<Name: %s>" % self.name
+    
+    def assign(self, value, context):
+        context[self.name] = value
     
     def calculate(self, context):
         return context[self.name]
@@ -210,3 +213,17 @@ class List(Expression):
     
     def calculate(self, context):
         return [x.calculate(context) for x in self.value]
+
+class Subscript(Expression):
+    def __init__(self, value, script):
+        self.value = value
+        self.script = script
+    
+    def __str__(self):
+        return "<Subscript: %s[%s]>" % (self.value, self.script)
+    
+    def assign(self, value, context):
+        context[self.value.name][self.script.calculate(context)] = value
+    
+    def calculate(self, context):
+        return self.value.calculate(context)[self.script.calculate(context)]
