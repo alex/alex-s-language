@@ -4,32 +4,37 @@ from alexs_lang import ast
 
 class ContextDictionary(object):
     def __init__(self):
-        self._local = {}
-        self._global = {}
-        self._locals = []
+        self._contexts = [{}]
     
     def __setitem__(self, key, val):
-        if not self._locals:
-            self._global[key] = val
-        else:
-            self._local[key] = val
+        self._locals[key] = val
     
     def __getitem__(self, key):
-        if self._locals and key in self._local:
-            return self._local[key]
-        return self._global[key]
+        try:
+            return self._locals[key]
+        except KeyError:
+            return self._globals[key]
     
     def __contains__(self, key):
-        if self._locals and key in self._local:
-            return True
-        return key in self._global
+        return key in self._locals or key in self._globals
+    
+    @property
+    def is_global(self):
+        return len(self._contexts) > 1
+    
+    @property
+    def _locals(self):
+        return self._contexts[len(self._contexts)-1]
+    
+    @property
+    def _globals(self):
+        return self._contexts[0]
     
     def enter_local(self):
-        self._locals.append(self._local)
-        self._local = {}
+        self._contexts.append({})
     
     def leave_local(self):
-        self._local = self._locals.pop()
+        self._contexts.pop()
 
 class PrintFunction(ast.FunctionBody):
     def __init__(self):
