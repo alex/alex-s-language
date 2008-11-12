@@ -2,9 +2,12 @@
 #include "alfunction.h"
 
 class AddInts : public AlFunction  {
-    virtual AlObj* operator()(AlInt* self, AlInt* other) {
-        return new AlInt(self->value + other->value);
-    }
+    public:
+        virtual AlObj* operator()(std::vector<AlObj*> args, std::map<std::string, AlObj*> kwargs) {
+            AlInt* self = (AlInt*)args[0];
+            AlInt* other = (AlInt*)args[1];
+            return new AlInt(self->value+other->value);
+        }
 };
 
 AlInt::AlInt()  {
@@ -19,5 +22,10 @@ AlInt::AlInt(int val)   {
 
 void AlInt::setup() {
     this->attrs["__add__"] = new AddInts();
+}
+
+std::ostream& operator<<(std::ostream &ostr, AlInt* obj) {
+    ostr << obj->value;
+    return ostr;
 }
 

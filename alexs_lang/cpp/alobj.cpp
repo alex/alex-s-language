@@ -1,3 +1,6 @@
+#include <map>
+#include <vector>
+
 #include "alobj.h"
 #include "alfunction.h"
 
@@ -14,5 +17,13 @@ AlObj* AlObj::operator+(AlObj* other)   {
     if (method == NULL) {
         throw "Can't add these 2 objects together";
     }
-    return (*method)(this, other);
+    std::vector<AlObj*> args;
+    args.push_back(this);
+    args.push_back(other);
+    return (*method)(args, std::map<std::string, AlObj*>());
 }
+
+std::ostream& operator<<(std::ostream &ostr, AlObj* obj) {
+    return ostr;
+}
+

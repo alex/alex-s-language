@@ -12,4 +12,7 @@ class AlInt : public AlObj {
         int value;
 };
 
+std::ostream& operator<<(std::ostream &ostr, AlInt* obj);
+
+
 #endif
