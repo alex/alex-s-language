@@ -2,7 +2,7 @@
 #include "alfunction.h"
 
 class AddInts : public AlFunction  {
-    AlObj* operator()(AlInt* self, AlInt* other)  {
+    virtual AlObj* operator()(AlInt* self, AlInt* other) {
         return new AlInt(self->value + other->value);
     }
 };

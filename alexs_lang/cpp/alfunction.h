@@ -5,7 +5,7 @@
 
 class AlFunction : public AlObj {
     public:
-        AlObj* operator()();
+        virtual AlObj* operator()();
 };
 
 #endif

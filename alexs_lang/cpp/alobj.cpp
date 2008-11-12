@@ -10,9 +10,9 @@ AlObj* AlObj::getattr(std::string key)  {
 }
 
 AlObj* AlObj::operator+(AlObj* other)   {
-    AlFunction* method = this->getattr("__add__");
+    AlFunction* method = (AlFunction*)this->getattr("__add__");
     if (method == NULL) {
         throw "Can't add these 2 objects together";
     }
-    return method(this, other);
+    return (*method)(this, other);
 }

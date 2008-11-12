@@ -1,5 +1,5 @@
 #include "alfunction.h"
 
-AlObj* AlFunction::operator()() {
+virtual AlObj* AlFunction::operator()() {
     return NULL;
 }
