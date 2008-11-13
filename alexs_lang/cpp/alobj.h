@@ -4,8 +4,10 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include "gc_cpp.h"
 
-class AlObj {
+
+class AlObj : public gc {
     public:
         AlObj* getattr(std::string key);
         AlObj* operator+(AlObj* other);
