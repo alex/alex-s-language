@@ -3,6 +3,7 @@
 
 #include "alobj.h"
 #include "alfunction.h"
+#include "alstring.h"
 
 AlObj* AlObj::getattr(std::string key)  {
     if (this->attrs.count(key) > 0) {
@@ -24,6 +25,14 @@ AlObj* AlObj::operator+(AlObj* other)   {
 }
 
 std::ostream& operator<<(std::ostream &ostr, AlObj* obj) {
+    AlFunction* method = (AlFunction*)obj->getattr("__str__");
+    if (method == NULL) {
+        throw "Can't print this object";
+    }
+    std::vector<AlObj*> args;
+    args.push_back(obj);
+    AlString* str = (AlString*)(*method)(args, std::map<std::string, AlObj*>());
+    ostr << str;
     return ostr;
 }
 

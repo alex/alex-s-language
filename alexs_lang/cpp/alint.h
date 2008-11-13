@@ -1,7 +1,13 @@
 #ifndef ALINT_H
 #define ALINT_H
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include "alobj.h"
+
+typedef std::map<std::string, AlObj*> KWARG_TYPE;
 
 class AlInt : public AlObj {
     public:
@@ -11,8 +17,5 @@ class AlInt : public AlObj {
         void setup();
         int value;
 };
-
-std::ostream& operator<<(std::ostream &ostr, AlInt* obj);
-
 
 #endif
