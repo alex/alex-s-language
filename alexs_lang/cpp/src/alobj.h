@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "gc_cpp.h"
+#include "gc/gc_cpp.h"
 
 class AlObj;
 
