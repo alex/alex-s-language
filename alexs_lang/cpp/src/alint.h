@@ -7,7 +7,6 @@
 
 #include "alobj.h"
 
-typedef std::map<std::string, AlObj*> KWARG_TYPE;
 
 class AlInt : public AlObj {
     public:

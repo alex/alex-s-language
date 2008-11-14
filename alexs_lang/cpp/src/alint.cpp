@@ -1,13 +1,14 @@
 #include <cmath>
 #include <sstream>
 
+#include "alobj.h"
 #include "alint.h"
 #include "alfunction.h"
 #include "alstring.h"
 
 class AddInts : public AlFunction  {
     public:
-        virtual AlObj* operator()(std::vector<AlObj*> args, std::map<std::string, AlObj*> kwargs) {
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
             AlInt* self = (AlInt*)args[0];
             AlInt* other = (AlInt*)args[1];
             return new AlInt(self->value+other->value);
@@ -16,7 +17,7 @@ class AddInts : public AlFunction  {
 
 class SubtractInts : public AlFunction {
     public:
-        virtual AlObj* operator()(std::vector<AlObj*> args, std::map<std::string, AlObj*> kwargs) {
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
             AlInt* self = (AlInt*)args[0];
             AlInt* other = (AlInt*)args[1];
             return new AlInt(self->value-other->value);
@@ -26,7 +27,7 @@ class SubtractInts : public AlFunction {
 
 class MultiplyInts : public AlFunction {
     public:
-        virtual AlObj* operator()(std::vector<AlObj*> args, std::map<std::string, AlObj*> kwargs) {
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
             AlInt* self = (AlInt*)args[0];
             AlInt* other = (AlInt*)args[1];
             return new AlInt(self->value*other->value);
@@ -36,7 +37,7 @@ class MultiplyInts : public AlFunction {
 
 class DivideInts : public AlFunction {
     public:
-        virtual AlObj* operator()(std::vector<AlObj*> args, std::map<std::string, AlObj*> kwargs) {
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
             AlInt* self = (AlInt*)args[0];
             AlInt* other = (AlInt*)args[1];
             return new AlInt(self->value/other->value);
@@ -46,7 +47,7 @@ class DivideInts : public AlFunction {
 
 class PowerInts : public AlFunction {
     public:
-        virtual AlObj* operator()(std::vector<AlObj*> args, std::map<std::string, AlObj*> kwargs) {
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
             AlInt* self = (AlInt*)args[0];
             AlInt* other = (AlInt*)args[1];
             return new AlInt(std::pow(self->value, other->value));
@@ -57,7 +58,7 @@ class PowerInts : public AlFunction {
 
 class PrintInt : public AlFunction {
     public:
-        virtual AlObj* operator()(std::vector<AlObj*> args, std::map<std::string, AlObj*> kwargs) {
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
             AlInt* self = (AlInt*)args[0];
             std::ostringstream stream;
             stream << self->value;

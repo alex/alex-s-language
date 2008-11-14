@@ -8,7 +8,7 @@
 
 class AlFunction : public AlObj {
     public:
-        virtual AlObj* operator()(std::vector<AlObj*> args, std::map<std::string, AlObj*> kwargs) {
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
             return NULL;
         }
 };

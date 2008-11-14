@@ -4,9 +4,9 @@
 #include "alint.h"
 #include "alfunction.h"
 
-class AlPrint : AlFunction {
+class AlPrint : public AlFunction {
     public:
-        virtual AlObj* operator()(std::vector<AlObj*> args, std::map<std::string, AlObj*> kwargs) {
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
             std::cout << args[0] << std::endl;
             return NULL;
         }

@@ -4,8 +4,14 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <vector>
+
 #include "gc_cpp.h"
 
+class AlObj;
+
+typedef std::map<std::string, AlObj*> KWARG_TYPE;
+typedef std::vector<AlObj*> ARG_TYPE;
 
 class AlObj : public gc {
     public:
@@ -14,9 +20,13 @@ class AlObj : public gc {
         AlObj* operator-(AlObj* other);
         AlObj* operator*(AlObj* other);
         AlObj* operator/(AlObj* other);
+        
+        
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
+            throw "Don't call an ABC";
+        }
 
-
-        std::map<std::string, AlObj*> attrs;
+        KWARG_TYPE attrs;
 };
 
 std::ostream& operator<<(std::ostream &ostr, AlObj* obj);

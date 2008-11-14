@@ -7,5 +7,7 @@ int main() {
     
     AlObj* a = new AlInt(3);
     AlObj* b = new AlInt(4);
-    print(*a+b);
+    std::vector<AlObj*> args;
+    args.push_back(*a+b);
+    (*print)(args, KWARG_TYPE());
 }
