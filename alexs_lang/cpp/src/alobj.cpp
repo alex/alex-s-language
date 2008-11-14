@@ -24,6 +24,39 @@ AlObj* AlObj::operator+(AlObj* other)   {
     return (*method)(args, std::map<std::string, AlObj*>());
 }
 
+AlObj* AlObj::operator-(AlObj* other)   {
+    AlFunction* method = (AlFunction*)this->getattr("__sub__");
+    if (method == NULL) {
+        throw "Can't add these 2 objects together";
+    }
+    std::vector<AlObj*> args;
+    args.push_back(this);
+    args.push_back(other);
+    return (*method)(args, std::map<std::string, AlObj*>());
+}
+
+AlObj* AlObj::operator*(AlObj* other)   {
+    AlFunction* method = (AlFunction*)this->getattr("__mul__");
+    if (method == NULL) {
+        throw "Can't add these 2 objects together";
+    }
+    std::vector<AlObj*> args;
+    args.push_back(this);
+    args.push_back(other);
+    return (*method)(args, std::map<std::string, AlObj*>());
+}
+
+AlObj* AlObj::operator/(AlObj* other)   {
+    AlFunction* method = (AlFunction*)this->getattr("__div__");
+    if (method == NULL) {
+        throw "Can't add these 2 objects together";
+    }
+    std::vector<AlObj*> args;
+    args.push_back(this);
+    args.push_back(other);
+    return (*method)(args, std::map<std::string, AlObj*>());
+}
+
 std::ostream& operator<<(std::ostream &ostr, AlObj* obj) {
     AlFunction* method = (AlFunction*)obj->getattr("__str__");
     if (method == NULL) {

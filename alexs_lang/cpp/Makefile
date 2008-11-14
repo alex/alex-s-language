@@ -1,4 +1,4 @@
 test:
-	g++ -I/usr/include/gc *.cpp /usr/lib/libgccpp.so -o main
+	g++ -I/usr/include/gc src/*.cpp /usr/lib/libgccpp.so test.cpp -o main
 	./main
 	rm main

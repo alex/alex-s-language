@@ -11,6 +11,9 @@ class AlObj : public gc {
     public:
         AlObj* getattr(std::string key);
         AlObj* operator+(AlObj* other);
+        AlObj* operator-(AlObj* other);
+        AlObj* operator*(AlObj* other);
+        AlObj* operator/(AlObj* other);
 
 
         std::map<std::string, AlObj*> attrs;
