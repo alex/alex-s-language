@@ -1,17 +1,19 @@
 #ifndef ALOBJ_H
 #define ALOBJ_H
 
+#include <gc/gc_allocator.h>
+#include <gc/gc_cpp.h>
+
 #include <iostream>
 #include <map>
 #include <string>
 #include <vector>
 
-#include "gc/gc_cpp.h"
 
 class AlObj;
 
-typedef std::map<std::string, AlObj*> KWARG_TYPE;
-typedef std::vector<AlObj*> ARG_TYPE;
+typedef std::map<std::string, AlObj*, std::less<std::string>, gc_allocator<std::pair<const std::string, AlObj*> > > KWARG_TYPE;
+typedef std::vector<AlObj*, gc_allocator<AlObj*> > ARG_TYPE;
 
 class AlObj : public gc {
     public:

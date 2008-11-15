@@ -18,10 +18,10 @@ AlObj* AlObj::operator+(AlObj* other)   {
     if (method == NULL) {
         throw "Can't add these 2 objects together";
     }
-    std::vector<AlObj*> args;
+    ARG_TYPE args;
     args.push_back(this);
     args.push_back(other);
-    return (*method)(args, std::map<std::string, AlObj*>());
+    return (*method)(args, KWARG_TYPE());
 }
 
 AlObj* AlObj::operator-(AlObj* other)   {
@@ -29,10 +29,10 @@ AlObj* AlObj::operator-(AlObj* other)   {
     if (method == NULL) {
         throw "Can't add these 2 objects together";
     }
-    std::vector<AlObj*> args;
+    ARG_TYPE args;
     args.push_back(this);
     args.push_back(other);
-    return (*method)(args, std::map<std::string, AlObj*>());
+    return (*method)(args, KWARG_TYPE());
 }
 
 AlObj* AlObj::operator*(AlObj* other)   {
@@ -40,10 +40,10 @@ AlObj* AlObj::operator*(AlObj* other)   {
     if (method == NULL) {
         throw "Can't add these 2 objects together";
     }
-    std::vector<AlObj*> args;
+    ARG_TYPE args;
     args.push_back(this);
     args.push_back(other);
-    return (*method)(args, std::map<std::string, AlObj*>());
+    return (*method)(args, KWARG_TYPE());
 }
 
 AlObj* AlObj::operator/(AlObj* other)   {
@@ -51,10 +51,10 @@ AlObj* AlObj::operator/(AlObj* other)   {
     if (method == NULL) {
         throw "Can't add these 2 objects together";
     }
-    std::vector<AlObj*> args;
+    ARG_TYPE args;
     args.push_back(this);
     args.push_back(other);
-    return (*method)(args, std::map<std::string, AlObj*>());
+    return (*method)(args, KWARG_TYPE());
 }
 
 std::ostream& operator<<(std::ostream &ostr, AlObj* obj) {
@@ -62,9 +62,9 @@ std::ostream& operator<<(std::ostream &ostr, AlObj* obj) {
     if (method == NULL) {
         throw "Can't print this object";
     }
-    std::vector<AlObj*> args;
+    ARG_TYPE args;
     args.push_back(obj);
-    AlString* str = (AlString*)(*method)(args, std::map<std::string, AlObj*>());
+    AlString* str = (AlString*)(*method)(args, KWARG_TYPE());
     ostr << str;
     return ostr;
 }
