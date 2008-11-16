@@ -59,8 +59,7 @@ class Interpreter(object):
     
     def execute(self):
         self.parse()
-        for node in self.ast:
-            node.calculate(self.context)
+        self.ast.calculate(self.context)
     
     def parse(self):
         self.parser = Parser()
