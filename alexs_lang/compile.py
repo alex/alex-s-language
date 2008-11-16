@@ -1,5 +1,4 @@
 from alexs_lang import ast
-from alexs_lang.cpp import CppGenerator
 from alexs_lang.parser import Parser
 
 class ContextVars(object):
@@ -10,7 +9,7 @@ class ContextVars(object):
         return key in self._locals or key in self._globals
     
     def add(self, key):
-        self._locals = key
+        self._locals.add(key)
     
     @property
     def is_global(self):
@@ -37,8 +36,11 @@ class Compiler(object):
         self.context = ContextVars()
     
     def compile(self):
+        from alexs_lang.cpp import generate
+
         self.parse()
-        cpp = self.ast.compiler(CppGenerator())
+        gen = generate.Generator(self.ast)
+        return gen.generate()
     
     def parse(self):
         self.parser = Parser()

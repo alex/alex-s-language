@@ -20,9 +20,15 @@ class NodeList(object):
             n = node.calculate(context)
             if n is not None:
                 return n
+    
+    def generate(self, generators):
+        return generators['node_list']([x.generate(generators) for x in self])
 
 class Expression(object):
     def calculate(self):
+        raise NotImplementedError()
+    
+    def generate(self):
         raise NotImplementedError()
 
 class BinaryOperation(Expression):
@@ -51,6 +57,9 @@ class BinaryOperation(Expression):
     
     def calculate(self, context):
         return self.OPS[self.op](self.left.calculate(context), self.right.calculate(context))
+    
+    def generate(self, generators):
+        return generators['binary_op'](self.left.generate(generators), self.right.generate(generators), self.op)
 
 class UnaryOperation(Expression):
     OPS = {
@@ -68,6 +77,9 @@ class UnaryOperation(Expression):
     def calculate(self, context):
         return self.OPS[self.op](self.value.calculate(context))
 
+    def generate(self, generators):
+        return generators['unary_op'](self.value.generate(generators), self.op)
+
 class Number(Expression):
     def __init__(self, value):
         self.value = value
@@ -77,6 +89,9 @@ class Number(Expression):
     
     def calculate(self, context):
         return self.value
+    
+    def generate(self, generators):
+        return generators['int'](self.value)
 
 class Boolean(Expression):
     def __init__(self, value):
@@ -87,6 +102,9 @@ class Boolean(Expression):
     
     def calculate(self, context):
         return self.value
+    
+    def generate(self, generators):
+        return generators['bool'](self.value)
 
 class NoneVal(Expression):
     def __str__(self):
@@ -94,6 +112,9 @@ class NoneVal(Expression):
     
     def calculate(self, context):
         return None
+    
+    def generate(self, generators):
+        return generators['none']()
 
 class Assignment(Expression):
     def __init__(self, left, right):
@@ -107,6 +128,9 @@ class Assignment(Expression):
         val = self.right.calculate(context)
         for var in self.left:
             var.assign(val, context)
+    
+    def generate(self, generators):
+        return generators['assign'](self.left, self.right.generate(generators))
 
 class Name(Expression):
     def __init__(self, name):
@@ -120,6 +144,9 @@ class Name(Expression):
     
     def calculate(self, context):
         return context[self.name]
+    
+    def generate(self, generators):
+        return generators['name'](self.name)
 
 class If(NodeList):
     def __init__(self, condition, main_body, else_body=None, elifs=None):
@@ -141,6 +168,9 @@ class If(NodeList):
                     return body.calculate(context)
         if self.else_body is not None:
             return self.else_body.calculate(context)
+    
+    def generate(self, generators):
+        return generators['if'](self.condition.generate(generators), self.else_body.generate(generators) if self.else_body else None, [(cond.generate(generators), body.generate(generators)) for cond, body in self.elifs] if self.elifs else None)
 
 class FunctionCall(Expression):
     def __init__(self, name, arglist):
@@ -153,6 +183,9 @@ class FunctionCall(Expression):
     def calculate(self, context):
         args = [x.calculate(context) for x in self.arglist]
         return self.name.calculate(context).calculate(args, context)
+    
+    def generate(self, generators):
+        return generators['function_call'](self.name.generate(generators), [x.generate(generators) for x in self.arglist])
         
 class Function(Expression):
     def __init__(self, args, body):
@@ -164,6 +197,9 @@ class Function(Expression):
     
     def calculate(self, context):
         return FunctionBody(self.args, self.body)
+    
+    def generate(self, generators):
+        return generators['function_call']([x.generate(generators) for x in self.args], self.body.generate(generators))
 
 class FunctionBody(NodeList):
     def __init__(self, args, body):
@@ -190,6 +226,9 @@ class Return(Expression):
     
     def calculate(self, context):
         return self.value.calculate(context)
+    
+    def generate(self, generators):
+        return generators['return'](self.value.generate(generators))
 
 class For(NodeList):
     def __init__(self, var_name, iterable, body):
