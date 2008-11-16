@@ -7,13 +7,13 @@ int main() {
     
     for (int i = 0; ; i++) {
         AlObj* a = new AlInt(3);
+        
+        AlObj* b = new AlInt(4);
+        ARG_TYPE args;
+        args.push_back(*a+b);
         if (i % 100000 == 0) {
             std::cout << GC_get_heap_size() << std::endl;
+            (*print)(args, KWARG_TYPE());
         }
-        
-//        AlObj* b = new AlInt(4);
-//        ARG_TYPE args;
-//        args.push_back(*a+b);
-//        (*print)(args, KWARG_TYPE());
     }
 }
