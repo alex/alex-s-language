@@ -12,12 +12,15 @@
 
 class AlObj;
 
-typedef std::map<std::string, AlObj*, std::less<std::string>, gc_allocator<std::pair<const std::string, AlObj*> > > KWARG_TYPE;
+typedef std::basic_string<char, std::char_traits<char>, gc_allocator<char> > KEY_TYPE;
+typedef std::map<KEY_TYPE, AlObj*, std::less<KEY_TYPE>, gc_allocator<std::pair<KEY_TYPE, AlObj*> > > KWARG_TYPE;
 typedef std::vector<AlObj*, gc_allocator<AlObj*> > ARG_TYPE;
 
 class AlObj : public gc {
     public:
-        AlObj* getattr(std::string key);
+        AlObj* getattr(KEY_TYPE key);
+        void setattr(KEY_TYPE key, AlObj* value);
+        
         AlObj* operator+(AlObj* other);
         AlObj* operator-(AlObj* other);
         AlObj* operator*(AlObj* other);

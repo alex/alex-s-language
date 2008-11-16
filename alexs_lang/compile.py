@@ -1,6 +1,6 @@
-from alexs_lang.parser import Parser
-
 from alexs_lang import ast
+from alexs_lang.cpp import CppGenerator
+from alexs_lang.parser import Parser
 
 class ContextVars(object):
     def __init__(self):
@@ -31,12 +31,14 @@ class ContextVars(object):
         self._contexts.pop()
 
 class Compiler(object):
-    def __init__(self, code):
+    def __init__(self, code, outfile):
         self.code = code
+        self.outfile = outfile
         self.context = ContextVars()
     
     def compile(self):
         self.parse()
+        cpp = self.ast.compiler(CppGenerator())
     
     def parse(self):
         self.parser = Parser()
