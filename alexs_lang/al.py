@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from optparse import OptionParser
+import os
+import subprocess
 import sys
 
 from alexs_lang.compile import Compiler
@@ -14,10 +16,15 @@ def main():
     parser.add_option('-i', '--interpret', action="store_false", dest='compile', help='interpret the file')
     
     options, args = parser.parse_args()
-    assert len(args) == 1
+    if len(args) != 1:
+        parser.print_help()
+        raise SystemExit
     f = open(args[0]).read()
     if options.compile:
-        c = Compiler(f, options.file or 'a.cpp')
+        out = options.file or 'a.cpp'
+        Compiler(f, out).compile()
+        subprocess.call(['indent', out])
+        os.remove('%s~' % out)
     else:
         Interpreter(f).execute()
 

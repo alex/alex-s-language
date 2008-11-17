@@ -40,7 +40,7 @@ class Compiler(object):
 
         self.parse()
         gen = generate.Generator(self.ast)
-        return gen.generate()
+        open(self.outfile, 'w').write(gen.generate())
     
     def parse(self):
         self.parser = Parser()
