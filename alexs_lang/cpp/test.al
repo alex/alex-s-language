@@ -1,2 +1,4 @@
-a = 3
-print(a+4)
+def f(n):
+    return n+1
+
+print(f(2))

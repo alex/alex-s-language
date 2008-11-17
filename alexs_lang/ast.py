@@ -199,7 +199,7 @@ class Function(Expression):
         return FunctionBody(self.args, self.body)
     
     def generate(self, generators):
-        return generators['function_call']([x.generate(generators) for x in self.args], self.body.generate(generators))
+        return generators['function'](self.args, self.body.generate(generators))
 
 class FunctionBody(NodeList):
     def __init__(self, args, body):

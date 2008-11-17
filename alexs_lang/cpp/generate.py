@@ -11,10 +11,10 @@ int main() {
 }
 """
 
-def get_unused_name(context):
+def get_unused_name(context, prefix='t'):
     for i in count():
-        if "t%s" % i not in context:
-            return "t%s" % i
+        if "%s%s" % (prefix, i) not in context:
+            return "%s%s" % (prefix, i)
 
 class Generator(object):
     def __init__(self, ast):
@@ -25,7 +25,7 @@ class Generator(object):
     def generate(self):
         gen = self.ast.generate(CPP_GENERATORS)
         functions, main = gen.as_code(self.context)
-        return CODE_TEMPLATE % {'functions': functions if functions else '', 'main': '\n'.join(main)}
+        return CODE_TEMPLATE % {'functions': '\n'.join(functions) if functions else '', 'main': '\n'.join(main)}
 
 class NodeListGenerator(object):
     def __init__(self, nodes):
@@ -84,6 +84,7 @@ class FunctionCallGenerator(object):
         main = []
         varname = get_unused_name(context)
         main.append("ARG_TYPE %s" % varname)
+        context.add(varname)
         for arg in self.arglist:
             main.extend(arg.as_code(context)[1])
             main.append("%s.push_back(%s)" % (varname, main.pop()))
@@ -103,18 +104,51 @@ class AssignmentGenerator(object):
         self.right = right
     
     def as_code(self, context):
-        main = self.right.as_code(context)[1]
+        func, main = self.right.as_code(context)
         right = main.pop()
         for left in self.left:
             if left.as_code(context)[1][0] in context:
                 main.append('%s = %s' % (left.as_code(context)[1][0], right))
             else:
+                context.add(left.as_code(context)[1][0])
                 main.append('AlObj* %s = %s' % (left.as_code(context)[1][0], right))
+        return func, main
+
+class FunctionGenerator(object):
+    def __init__(self, args, body):
+        self.args = args
+        self.body = body
+    
+    def as_code(self, context):
+        function = """class %(fname)s : public AlFunction {
+            public:
+                virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
+                    %(args)s
+                    %(body)s
+                }
+        };
+        """
+        fname = get_unused_name(context, 'f')
+        context.enter_local()
+        args = []
+        for arg in reversed(self.args):
+            args.append('AlObj* %s = args.back();' % arg)
+            args.append('args.pop_back();')
+        body = self.body.as_code(context)[1]
+        return [function % {'fname': fname, 'args': '\n'.join(args), 'body': '\n'.join(body)}], ["new %s()" % fname]
+
+class ReturnGenerator(object):
+    def __init__(self, value):
+        self.value = value
+    
+    def as_code(self, context):
+        main = self.value.as_code(context)[1]
+        main.append('return %s' % main.pop())
         return [], main
 
 CPP_GENERATORS = {
     'node_list': NodeListGenerator,
-#    'function': FunctionGenerator,
+    'function': FunctionGenerator,
     'binary_op': BinaryOpGenerator,
 #    'unary_op': UnaryOpGenerator,
     'int': IntegerGenerator,
@@ -124,6 +158,6 @@ CPP_GENERATORS = {
     'name': NameGenerator,
 #    'if': IfGenerator,
     'function_call': FunctionCallGenerator,
-#    'return': ReturnGenerator,
+    'return': ReturnGenerator,
 }
 
