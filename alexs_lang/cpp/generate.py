@@ -2,11 +2,9 @@ from itertools import count
 
 from alexs_lang.compile import ContextVars
 
-CODE_TEMPLATE = """
-#include "src/base.cpp"
+CODE_TEMPLATE = """#include "src/base.cpp"
 
 %(functions)s
-
 int main() {
     AlObj* print = new AlPrint();
     %(main)s
@@ -63,7 +61,12 @@ class BinaryOpGenerator(object):
         self.op = op
         
     def as_code(self, context):
-        return [], ["*(%s) %s %s" % ('\n'.join(self.left.as_code(context)[1]), self.OPS[self.op], '\n'.join(self.right.as_code(context)[1]))]
+        main = self.left.as_code(context)[1]
+        left = main.pop()
+        main.extend(self.right.as_code(context)[1])
+        right = main.pop()
+        main.append("*(%s) %s %s" % (left, self.OPS[self.op], right))
+        return [], main
 
 class IntegerGenerator(object):
     def __init__(self, value):
@@ -82,8 +85,9 @@ class FunctionCallGenerator(object):
         varname = get_unused_name(context)
         main.append("ARG_TYPE %s" % varname)
         for arg in self.arglist:
-            main.append("%s.push_back(%s)" % (varname, '\n'.join(arg.as_code(context)[1])))
-        main.append('(*%s)(%s, KWARG_TYPE())' % ('\n'.join(self.name.as_code(context)[1]), varname))
+            main.extend(arg.as_code(context)[1])
+            main.append("%s.push_back(%s)" % (varname, main.pop()))
+        main.append('(*%s)(%s, KWARG_TYPE())' % (self.name.as_code(context)[1][0], varname))
         return [], main
 
 class NameGenerator(object):
