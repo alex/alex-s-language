@@ -97,6 +97,21 @@ class NameGenerator(object):
     def as_code(self, context):
         return [], [self.name]
 
+class AssignmentGenerator(object):
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+    
+    def as_code(self, context):
+        main = self.right.as_code(context)[1]
+        right = main.pop()
+        for left in self.left:
+            if left.as_code(context)[1][0] in context:
+                main.append('%s = %s' % (left.as_code(context)[1][0], right))
+            else:
+                main.append('AlObj* %s = %s' % (left.as_code(context)[1][0], right))
+        return [], main
+
 CPP_GENERATORS = {
     'node_list': NodeListGenerator,
 #    'function': FunctionGenerator,
@@ -105,7 +120,7 @@ CPP_GENERATORS = {
     'int': IntegerGenerator,
 #    'bool': BooleanGenerator,
 #    'none': NoneGenerator,
-#    'assign': AssignmentGenerator,
+    'assign': AssignmentGenerator,
     'name': NameGenerator,
 #    'if': IfGenerator,
     'function_call': FunctionCallGenerator,

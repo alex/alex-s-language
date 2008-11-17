@@ -130,7 +130,7 @@ class Assignment(Expression):
             var.assign(val, context)
     
     def generate(self, generators):
-        return generators['assign'](self.left, self.right.generate(generators))
+        return generators['assign']([x.generate(generators) for x in self.left], self.right.generate(generators))
 
 class Name(Expression):
     def __init__(self, name):
