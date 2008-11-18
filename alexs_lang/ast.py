@@ -170,7 +170,7 @@ class If(NodeList):
             return self.else_body.calculate(context)
     
     def generate(self, generators):
-        return generators['if'](self.condition.generate(generators), self.else_body.generate(generators) if self.else_body else None, [(cond.generate(generators), body.generate(generators)) for cond, body in self.elifs] if self.elifs else None)
+        return generators['if'](self.condition.generate(generators), self.main_body.generate(generators), self.else_body.generate(generators) if self.else_body else None, [(cond.generate(generators), body.generate(generators)) for cond, body in self.elifs] if self.elifs else None)
 
 class FunctionCall(Expression):
     def __init__(self, name, arglist):

@@ -23,20 +23,20 @@ class Generator(object):
     
     def generate(self):
         gen = self.ast.generate(CPP_GENERATORS)
-        functions, main = gen.as_code(self.context)
+        functions, main = gen.as_code(self.context, False)
         return CODE_TEMPLATE % {'functions': '\n'.join(functions) if functions else '', 'main': '\n'.join(main)}
 
 class NodeListGenerator(object):
     def __init__(self, nodes):
         self.nodes = nodes
     
-    def as_code(self, context):
+    def as_code(self, context, semicolon=True):
         functions, main = [], []
         for node in self.nodes:
             f, m = node.as_code(context)
             functions.extend(f)
             main.extend(m)
-        return functions, ['%s;' % x for x in main]
+        return functions, ['%s%s' % (x, ';' if semicolon else '') for x in main]
 
 class BinaryOpGenerator(object):
     OPS = {
@@ -83,10 +83,14 @@ class FunctionCallGenerator(object):
         main = []
         varname = get_unused_name(context)
         main.append("ARG_TYPE %s" % varname)
+        if context.is_global:
+            main[-1] += ';'
         context.add(varname)
         for arg in self.arglist:
             main.extend(arg.as_code(context)[1])
             main.append("%s.push_back(%s)" % (varname, main.pop()))
+            if context.is_global:
+                main[-1] += ';'
         main.append('(*%s)(%s, KWARG_TYPE())' % (self.name.as_code(context)[1][0], varname))
         return [], main
 
@@ -103,6 +107,9 @@ class AssignmentGenerator(object):
         self.right = right
     
     def as_code(self, context):
+        if isinstance(self.right, FunctionGenerator):
+            func, main = self.right.as_code(self.left[0], context)
+            return func, main
         func, main = self.right.as_code(context)
         right = main.pop()
         for left in self.left:
@@ -118,7 +125,7 @@ class FunctionGenerator(object):
         self.args = args
         self.body = body
     
-    def as_code(self, context):
+    def as_code(self, name, context):
         function = """class %(fname)s : public AlFunction {
             public:
                 virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
@@ -126,6 +133,7 @@ class FunctionGenerator(object):
                     %(body)s
                 }
         };
+        AlObj* %(name)s = new %(fname)s();
         """
         fname = get_unused_name(context, 'f')
         context.enter_local()
@@ -134,7 +142,7 @@ class FunctionGenerator(object):
             args.append('AlObj* %s = args.back();' % arg)
             args.append('args.pop_back();')
         body = self.body.as_code(context)[1]
-        return [function % {'fname': fname, 'args': '\n'.join(args), 'body': '\n'.join(body)}], ["new %s()" % fname]
+        return [function % {'fname': fname, 'args': '\n'.join(args), 'body': '\n'.join(body), 'name': name.as_code(context)[1][0]}], []
 
 class ReturnGenerator(object):
     def __init__(self, value):
@@ -144,6 +152,31 @@ class ReturnGenerator(object):
         main = self.value.as_code(context)[1]
         main.append('return %s' % main.pop())
         return [], main
+
+class IfGenerator(object):
+    def __init__(self, condition, body, else_body, elifs):
+        self.condition = condition
+        self.body = body
+        self.else_body = else_body
+        self.elifs = elifs
+    
+    def as_code(self, context):
+        funcs, main = [], []
+        main.extend(self.condition.as_code(context)[1])
+        main.append("if (%s) {" % main.pop())
+        main.extend(self.body.as_code(context)[1])
+        main.append("}")
+        if self.elifs is not None:
+            for cond, body in self.elifs:
+                main.extend(cond.as_code(context)[1])
+                main.append("else if (%s) {" % main.pop())
+                main.extend(self.body.as_code(context)[1])
+                main.append("}")
+        if self.else_body is not None:
+            main.append("else {")
+            main.extend(self.else_body.as_code(context)[1])
+            main.append("}")
+        return funcs, main
 
 CPP_GENERATORS = {
     'node_list': NodeListGenerator,
@@ -155,7 +188,7 @@ CPP_GENERATORS = {
 #    'none': NoneGenerator,
     'assign': AssignmentGenerator,
     'name': NameGenerator,
-#    'if': IfGenerator,
+    'if': IfGenerator,
     'function_call': FunctionCallGenerator,
     'return': ReturnGenerator,
 }
