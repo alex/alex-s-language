@@ -1,14 +1,3 @@
-#include <iostream>
+#include "base.h"
 
-#include "alobj.h"
-#include "alint.h"
-#include "alfunction.h"
-
-class AlPrint : public AlFunction {
-    public:
-        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
-            std::cout << args[0] << std::endl;
-            return NULL;
-        }
-
-};
+AlObj* print = new AlPrint();

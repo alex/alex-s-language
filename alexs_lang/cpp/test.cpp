@@ -1,4 +1,4 @@
-#include "src/base.cpp"
+#include "src/base.h"
 
 class f0:public AlFunction
 {
@@ -14,7 +14,6 @@ public:
 int
 main ()
 {
-  AlObj *print = new AlPrint ();
   AlObj *f = new f0 ();
   ARG_TYPE t0;
   ARG_TYPE t1;

@@ -2,11 +2,10 @@ from itertools import count
 
 from alexs_lang.compile import ContextVars
 
-CODE_TEMPLATE = """#include "src/base.cpp"
+CODE_TEMPLATE = """#include "src/base.h"
 
 %(functions)s
 int main() {
-    AlObj* print = new AlPrint();
     %(main)s
 }
 """
