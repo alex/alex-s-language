@@ -2,6 +2,9 @@ from itertools import count
 
 from alexs_lang.compile import ContextVars
 
+class NoSemi(str):
+    no_semi = True
+
 CODE_TEMPLATE = """#include "src/base.h"
 
 %(functions)s
@@ -23,20 +26,20 @@ class Generator(object):
     
     def generate(self):
         gen = self.ast.generate(CPP_GENERATORS)
-        functions, main = gen.as_code(self.context, False)
+        functions, main = gen.as_code(self.context)
         return CODE_TEMPLATE % {'functions': '\n'.join(functions) if functions else '', 'main': '\n'.join(main)}
 
 class NodeListGenerator(object):
     def __init__(self, nodes):
         self.nodes = nodes
     
-    def as_code(self, context, semicolon=True):
+    def as_code(self, context):
         functions, main = [], []
         for node in self.nodes:
             f, m = node.as_code(context)
             functions.extend(f)
             main.extend(m)
-        return functions, ['%s%s' % (x, ';' if semicolon else '') for x in main]
+        return functions, ['%s%s' % (x, ';' if not getattr(x, 'no_semi', False) else '') for x in main]
 
 class BinaryOpGenerator(object):
     OPS = {
@@ -64,7 +67,7 @@ class BinaryOpGenerator(object):
         left = main.pop()
         main.extend(self.right.as_code(context)[1])
         right = main.pop()
-        main.append("*(%s) %s %s" % (left, self.OPS[self.op], right))
+        main.append("(*(%s)) %s %s" % (left, self.OPS[self.op], right))
         return [], main
 
 class IntegerGenerator(object):
@@ -72,7 +75,7 @@ class IntegerGenerator(object):
         self.value = value
     
     def as_code(self, context):
-        return [], ["new AlInt(%s)" % self.value]
+        return [], ["(new AlInt(%s))" % self.value]
 
 class FunctionCallGenerator(object):
     def __init__(self, name, arglist):
@@ -83,14 +86,10 @@ class FunctionCallGenerator(object):
         main = []
         varname = get_unused_name(context)
         main.append("ARG_TYPE %s" % varname)
-        if context.is_global:
-            main[-1] += ';'
         context.add(varname)
         for arg in self.arglist:
             main.extend(arg.as_code(context)[1])
             main.append("%s.push_back(%s)" % (varname, main.pop()))
-            if context.is_global:
-                main[-1] += ';'
         main.append('(*%s)(%s, KWARG_TYPE())' % (self.name.as_code(context)[1][0], varname))
         return [], main
 
@@ -107,17 +106,23 @@ class AssignmentGenerator(object):
         self.right = right
     
     def as_code(self, context):
-        if isinstance(self.right, FunctionGenerator):
-            func, main = self.right.as_code(self.left[0], context)
-            return func, main
         func, main = self.right.as_code(context)
-        right = main.pop()
+        if isinstance(self.right, FunctionGenerator):
+            right = func.pop()
+        else:
+            right = main.pop()
         for left in self.left:
             if left.as_code(context)[1][0] in context:
-                main.append('%s = %s' % (left.as_code(context)[1][0], right))
+                if isinstance(self.right, FunctionGenerator):
+                    func.append('%s = %s;' % (left.as_code(context)[1][0], right))
+                else:
+                    main.append('%s = %s;' % (left.as_code(context)[1][0], right))
             else:
                 context.add(left.as_code(context)[1][0])
-                main.append('AlObj* %s = %s' % (left.as_code(context)[1][0], right))
+                if isinstance(self.right, FunctionGenerator):
+                    func.append('AlObj* %s = %s;' % (left.as_code(context)[1][0], right))
+                else:
+                    main.append('AlObj* %s = %s;' % (left.as_code(context)[1][0], right))
         return func, main
 
 class FunctionGenerator(object):
@@ -125,7 +130,7 @@ class FunctionGenerator(object):
         self.args = args
         self.body = body
     
-    def as_code(self, name, context):
+    def as_code(self, context):
         function = """class %(fname)s : public AlFunction {
             public:
                 virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
@@ -133,7 +138,6 @@ class FunctionGenerator(object):
                     %(body)s
                 }
         };
-        AlObj* %(name)s = new %(fname)s();
         """
         fname = get_unused_name(context, 'f')
         context.enter_local()
@@ -142,7 +146,7 @@ class FunctionGenerator(object):
             args.append('AlObj* %s = args.back();' % arg)
             args.append('args.pop_back();')
         body = self.body.as_code(context)[1]
-        return [function % {'fname': fname, 'args': '\n'.join(args), 'body': '\n'.join(body), 'name': name.as_code(context)[1][0]}], []
+        return [function % {'fname': fname, 'args': '\n'.join(args), 'body': '\n'.join(body)}, "new %s()" % fname], []
 
 class ReturnGenerator(object):
     def __init__(self, value):
@@ -163,19 +167,19 @@ class IfGenerator(object):
     def as_code(self, context):
         funcs, main = [], []
         main.extend(self.condition.as_code(context)[1])
-        main.append("if (%s) {" % main.pop())
+        main.append(NoSemi("if (%s) {" % main.pop()))
         main.extend(self.body.as_code(context)[1])
-        main.append("}")
+        main.append(NoSemi("}"))
         if self.elifs is not None:
             for cond, body in self.elifs:
                 main.extend(cond.as_code(context)[1])
-                main.append("else if (%s) {" % main.pop())
+                main.append(NoSemi("else if (%s) {" % main.pop()))
                 main.extend(self.body.as_code(context)[1])
-                main.append("}")
+                main.append(NoSemi("}"))
         if self.else_body is not None:
-            main.append("else {")
+            main.append(NoSemi("else {"))
             main.extend(self.else_body.as_code(context)[1])
-            main.append("}")
+            main.append(NoSemi("}"))
         return funcs, main
 
 CPP_GENERATORS = {

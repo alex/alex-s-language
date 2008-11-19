@@ -21,6 +21,10 @@ class AlObj : public gc {
         AlObj* getattr(KEY_TYPE key);
         void setattr(KEY_TYPE key, AlObj* value);
         
+        virtual operator bool();
+        
+        AlObj* operator==(AlObj* other);
+        
         AlObj* operator+(AlObj* other);
         AlObj* operator-(AlObj* other);
         AlObj* operator*(AlObj* other);

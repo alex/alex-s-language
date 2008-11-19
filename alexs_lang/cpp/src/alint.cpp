@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include "alobj.h"
+#include "albool.h"
 #include "alint.h"
 #include "alfunction.h"
 #include "alstring.h"
@@ -66,6 +67,15 @@ class PrintInt : public AlFunction {
         }
 };
 
+class EqualInt : public AlFunction {
+    public:
+        virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
+            AlInt* self = (AlInt*)args[0];
+            AlInt* other = (AlInt*)args[1];
+            return new AlBool(self->value == other->value);
+        }
+};
+
 AlInt::AlInt()  {
     this->value = 0;
     this->setup();
@@ -83,4 +93,5 @@ void AlInt::setup() {
     this->attrs["__div__"] = new DivideInts();
     this->attrs["__pow__"] = new PowerInts();
     this->attrs["__str__"] = new PrintInt();
+    this->attrs["__eq__"] = new EqualInt();
 }

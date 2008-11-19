@@ -17,6 +17,28 @@ void AlObj::setattr(KEY_TYPE key, AlObj* value) {
     this->attrs[key] = value;
 }
 
+AlObj::operator bool() {
+    AlFunction* method = (AlFunction*)this->getattr("__nonzero__");
+    if (method == NULL) {
+        throw "Can't test this object";
+    }
+    ARG_TYPE args;
+    args.push_back(this);
+    AlObj* result = (*method)(args, KWARG_TYPE());
+    return (bool)(*result);
+}
+
+AlObj* AlObj::operator==(AlObj* other) {
+    AlFunction* method = (AlFunction*)this->getattr("__eq__");
+    if (method == NULL) {
+        throw "Can't compare these 2 objects";
+    }
+    ARG_TYPE args;
+    args.push_back(this);
+    args.push_back(other);
+    return (*method)(args, KWARG_TYPE());
+}
+
 AlObj* AlObj::operator+(AlObj* other)   {
     AlFunction* method = (AlFunction*)this->getattr("__add__");
     if (method == NULL) {
