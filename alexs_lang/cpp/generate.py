@@ -75,7 +75,7 @@ class IntegerGenerator(object):
         self.value = value
     
     def as_code(self, context):
-        return [], ["(new AlInt(%s))" % self.value]
+        return [], ["(AlObj*)(new AlInt(%s))" % self.value]
 
 class FunctionCallGenerator(object):
     def __init__(self, name, arglist):
@@ -167,7 +167,7 @@ class IfGenerator(object):
     def as_code(self, context):
         funcs, main = [], []
         main.extend(self.condition.as_code(context)[1])
-        main.append(NoSemi("if (%s) {" % main.pop()))
+        main.append(NoSemi("if (bool(%s)) {" % main.pop()))
         main.extend(self.body.as_code(context)[1])
         main.append(NoSemi("}"))
         if self.elifs is not None:

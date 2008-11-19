@@ -7,7 +7,7 @@ public:
   {
     AlObj *n = args.back ();
       args.pop_back ();
-      return (*(n)) + (new AlInt (1));
+      return (*(n)) + (AlObj *) (new AlInt (1));
   }
 };
 
@@ -17,20 +17,20 @@ main ()
 {
   ARG_TYPE t0;
   ARG_TYPE t1;
-  t1.push_back ((new AlInt (2)));
+  t1.push_back ((AlObj *) (new AlInt (2)));
   t0.push_back ((*f) (t1, KWARG_TYPE ()));
   (*print) (t0, KWARG_TYPE ());
-  AlObj *x = (new AlInt (2));;
-  if ((*(x)) == (new AlInt (3)))
+  AlObj *x = (AlObj *) (new AlInt (2));;
+  ARG_TYPE t2;
+  t2.push_back (x);
+  (*print) (t2, KWARG_TYPE ());
+  ARG_TYPE t3;
+  t3.push_back ((*(x)) == (AlObj *) (new AlInt (3)));
+  (*print) (t3, KWARG_TYPE ());
+  if (bool ((*(x)) == (AlObj *) (new AlInt (3))))
     {
-      ARG_TYPE t2;;
-      t2.push_back (x);;
-      (*print) (t2, KWARG_TYPE ());;
-    }
-  else
-    {
-      ARG_TYPE t3;;
-      t3.push_back ((new AlInt (4)));;
-      (*print) (t3, KWARG_TYPE ());;
+      ARG_TYPE t4;;
+      t4.push_back (x);;
+      (*print) (t4, KWARG_TYPE ());;
     }
 }

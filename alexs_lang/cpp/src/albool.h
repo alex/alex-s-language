@@ -10,6 +10,8 @@ class AlBool : public AlObj {
         
         virtual operator bool();
         
+        void setup();
+        
         bool value;
 };
 
