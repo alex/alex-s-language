@@ -39,6 +39,10 @@ AlObj* AlObj::operator==(AlObj* other) {
     return (*method)(args, KWARG_TYPE());
 }
 
+AlObj* AlObj::operator||(AlObj* other) {
+
+}
+
 AlObj* AlObj::operator+(AlObj* other)   {
     AlFunction* method = (AlFunction*)this->getattr("__add__");
     if (method == NULL) {

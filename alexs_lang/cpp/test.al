@@ -1,11 +1,7 @@
-def f(n):
-    return n+1
+def fact(n):
+    if n == 1 or n == 0:
+        return 1
+    return n * fact(n-1)
 
-print(f(2))
-x = 2
-print(x)
-print(x==3)
-if x == 3:
-    print(x)
-#else:
-#    print(4)
+print(fact(1))
+print(fact(5))

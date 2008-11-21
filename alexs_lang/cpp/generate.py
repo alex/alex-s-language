@@ -167,7 +167,7 @@ class IfGenerator(object):
     def as_code(self, context):
         funcs, main = [], []
         main.extend(self.condition.as_code(context)[1])
-        main.append(NoSemi("if (bool(%s)) {" % main.pop()))
+        main.append(NoSemi("if (*(%s)) {" % main.pop()))
         main.extend(self.body.as_code(context)[1])
         main.append(NoSemi("}"))
         if self.elifs is not None:
