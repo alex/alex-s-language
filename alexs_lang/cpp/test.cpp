@@ -1,5 +1,6 @@
 #include "src/base.h"
 
+AlObj *fact;
 class f0:public AlFunction
 {
 public:
@@ -19,10 +20,10 @@ public:
   }
 };
 
-AlObj *fact = new f0 ();
 int
 main ()
 {
+  fact = new f0 ();
   ARG_TYPE t1;
   ARG_TYPE t2;
   t2.push_back ((AlObj *) (new AlInt (1)));
@@ -30,7 +31,7 @@ main ()
   (*print) (t1, KWARG_TYPE ());
   ARG_TYPE t3;
   ARG_TYPE t4;
-  t4.push_back ((AlObj *) (new AlInt (5)));
+  t4.push_back ((AlObj *) (new AlInt (25)));
   t3.push_back ((*fact) (t4, KWARG_TYPE ()));
   (*print) (t3, KWARG_TYPE ());
 }

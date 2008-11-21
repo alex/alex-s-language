@@ -114,13 +114,14 @@ class AssignmentGenerator(object):
         for left in self.left:
             if left.as_code(context)[1][0] in context:
                 if isinstance(self.right, FunctionGenerator):
-                    func.append('%s = %s;' % (left.as_code(context)[1][0], right))
+                    func.insert('%s = %s;' % (left.as_code(context)[1][0], right))
                 else:
                     main.append('%s = %s;' % (left.as_code(context)[1][0], right))
             else:
                 context.add(left.as_code(context)[1][0])
                 if isinstance(self.right, FunctionGenerator):
-                    func.append('AlObj* %s = %s;' % (left.as_code(context)[1][0], right))
+                    func.insert(0, 'AlObj* %s;' % left.as_code(context)[1][0])
+                    main.insert(0, '%s = %s' % (left.as_code(context)[1][0], right))
                 else:
                     main.append('AlObj* %s = %s;' % (left.as_code(context)[1][0], right))
         return func, main
