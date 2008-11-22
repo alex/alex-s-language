@@ -6,3 +6,4 @@ C++.  It's sytnax and semantics are very similar to Python.
 
 It currently requires the following to compile the generated C++ code:
     * Boehm GC
+    * GMP

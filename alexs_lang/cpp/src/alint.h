@@ -5,16 +5,20 @@
 #include <string>
 #include <vector>
 
+#include <gmp.h>
+#include <gmpxx.h>
+
 #include "alobj.h"
 
+typedef mpz_class INT_TYPE;
 
 class AlInt : public AlObj {
     public:
         AlInt();
-        AlInt(int val);
+        AlInt(INT_TYPE val);
         
         void setup();
-        int value;
+        INT_TYPE value;
 };
 
 #endif

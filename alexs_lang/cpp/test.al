@@ -4,4 +4,4 @@ def fact(n):
     return n * fact(n-1)
 
 print(fact(1))
-print(fact(12))
+print(fact(500))

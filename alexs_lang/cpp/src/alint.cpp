@@ -45,7 +45,7 @@ class DivideInts : public AlFunction {
         }
 
 };
-
+/*
 class PowerInts : public AlFunction {
     public:
         virtual AlObj* operator()(ARG_TYPE args, KWARG_TYPE kwargs) {
@@ -55,7 +55,7 @@ class PowerInts : public AlFunction {
         }
 
 };
-
+*/
 
 class PrintInt : public AlFunction {
     public:
@@ -81,7 +81,7 @@ AlInt::AlInt()  {
     this->setup();
 }
 
-AlInt::AlInt(int val)   {
+AlInt::AlInt(INT_TYPE val)   {
     this->value = val;
     this->setup();
 }
@@ -91,7 +91,7 @@ void AlInt::setup() {
     this->attrs["__sub__"] = new SubtractInts();
     this->attrs["__mul__"] = new MultiplyInts();
     this->attrs["__div__"] = new DivideInts();
-    this->attrs["__pow__"] = new PowerInts();
+//    this->attrs["__pow__"] = new PowerInts();
     this->attrs["__str__"] = new PrintInt();
     this->attrs["__eq__"] = new EqualInt();
 }

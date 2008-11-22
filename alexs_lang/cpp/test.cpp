@@ -31,7 +31,7 @@ main ()
   (*print) (t1, KWARG_TYPE ());
   ARG_TYPE t3;
   ARG_TYPE t4;
-  t4.push_back ((AlObj *) (new AlInt (12)));
+  t4.push_back ((AlObj *) (new AlInt (500)));
   t3.push_back ((*fact) (t4, KWARG_TYPE ()));
   (*print) (t3, KWARG_TYPE ());
 }
