@@ -40,14 +40,10 @@ AlObj* AlObj::operator==(AlObj* other) {
 }
 
 AlObj* AlObj::operator||(AlObj* other) {
-    AlFunction* method = (AlFunction*)this->getattr("__or__");
-    if (method == NULL) {
-        throw "Can't or these 2";
+    if (*this) {
+        return this;
     }
-    ARG_TYPE args;
-    args.push_back(this);
-    args.push_back(other);
-    return (*method)(args, KWARG_TYPE());
+    return other;
 }
 
 AlObj* AlObj::operator+(AlObj* other)   {
