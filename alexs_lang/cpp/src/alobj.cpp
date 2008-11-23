@@ -46,6 +46,13 @@ AlObj* AlObj::operator||(AlObj* other) {
     return other;
 }
 
+AlObj* AlObj::operator&&(AlObj* other) {
+    if (!bool(*this)) {
+        return this;
+    }
+    return other;
+}
+
 AlObj* AlObj::operator+(AlObj* other)   {
     AlFunction* method = (AlFunction*)this->getattr("__add__");
     if (method == NULL) {

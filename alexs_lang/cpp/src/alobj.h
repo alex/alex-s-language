@@ -26,6 +26,7 @@ class AlObj : public gc {
         AlObj* operator==(AlObj* other);
         
         AlObj* operator||(AlObj* other);
+        AlObj* operator&&(AlObj* other);
         
         AlObj* operator+(AlObj* other);
         AlObj* operator-(AlObj* other);
